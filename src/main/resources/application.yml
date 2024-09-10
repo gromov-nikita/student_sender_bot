@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: student_sender_bot
+  datasource:
+    url: jdbc:postgresql://localhost:5432/student_sender_bot
+    username: postgres
+    password: 5863
+  jpa:
+    hibernate:
+      ddl-auto: update
+telegram:
+  bot:
+    username: student_sender_bot
+    token: 7466690263:AAGOYLoIpwksOKfPZPbEHBQSPmk-RPajN9o
