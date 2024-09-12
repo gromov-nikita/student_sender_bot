@@ -1,0 +1,46 @@
+package org.bsut.student_sender_bot.service.bot;
+
+import lombok.RequiredArgsConstructor;
+import org.bsut.student_sender_bot.service.bot.enums.BotCommandLevel;
+import org.bsut.student_sender_bot.service.bot.enums.StudentSenderBotCommand;
+import org.bsut.student_sender_bot.service.bot.survey.SendMessageCreator;
+import org.bsut.student_sender_bot.service.bot.survey.SurveyService;
+import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Message;
+
+import java.util.Objects;
+
+import static org.bsut.student_sender_bot.service.bot.enums.StudentSenderBotCommand.*;
+
+@Service
+@RequiredArgsConstructor
+public class Messaging {
+    private final SurveyService surveyService;
+
+    public SendMessage getAnswer(Message message) {
+        if(isSurvey(message)) return doSurvey(message);
+        else return switch (message.getText()) {
+            case String text when text.equals(REG.getCommand()) -> SendMessageCreator.getDefault(message.getChatId(),REG.getCommandDescription());
+            case String text when text.equals(COMMANDS.getCommand()) -> SendMessageCreator.getDefault(message.getChatId(),getAllCommandInfo());
+            case String text when text.equals(ID.getCommand()) -> SendMessageCreator.getDefault(message.getChatId(),"Ваш id: " + message.getChatId());
+            case String text when text.equals("/start") -> SendMessageCreator.getDefault(message.getChatId(),"Привет, " + message.getChat().getFirstName() + ", вот список всех доступных команд: \n" + getAllCommandInfo());
+            default -> SendMessageCreator.getDefault(message.getChatId(),getIncorrectCommandText(message));
+        };
+    }
+    private boolean isSurvey(Message message) {
+        return surveyService.isContain(message.getChatId());
+    }
+    private SendMessage doSurvey(Message message) {
+        if(message.getText().equals(STOP.getCommand())) return removeSurvey(message);
+        else return new SendMessage();
+    }
+    private SendMessage removeSurvey(Message message) {
+        return SendMessageCreator.getDefault(message.getChatId(),"Вы успешно вышли из опроса. Теперь вы можете вводить команды");
+    }
+    private String getIncorrectCommandText(Message message) {
+        StudentSenderBotCommand botCommand = StudentSenderBotCommand.findCommand(message.getText());
+        if(Objects.isNull(botCommand)) return "Извините, " +  message.getChat().getFirstName() + ", я не знаю такой команды.";
+        else return "Извините, " +  message.getChat().getFirstName() + ", но эта команда используется в другом состоянии бота. " + botCommand.getInfo();
+    }
+}

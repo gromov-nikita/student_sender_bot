@@ -32,6 +32,8 @@ dependencies {
     implementation("org.apache.poi:poi:5.3.0")
     implementation("org.apache.poi:poi-ooxml:5.3.0")
     implementation("javax.xml.bind:jaxb-api:2.4.0-b180830.0359")
+    implementation("one.util:streamex:0.8.2")
+
 
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")

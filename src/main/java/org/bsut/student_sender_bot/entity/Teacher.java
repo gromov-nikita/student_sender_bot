@@ -17,7 +17,7 @@ import java.util.List;
 public class Teacher {
     @Id
     @Column(nullable = false)
-    private long telegramId;
+    private long chatId;
     private String name;
     @ManyToMany(mappedBy = "teachers")
     private List<Consultation> consultations;
