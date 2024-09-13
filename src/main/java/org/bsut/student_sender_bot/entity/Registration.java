@@ -19,13 +19,8 @@ public class Registration {
     @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
-    @ManyToMany
-    @JoinTable(
-            name = "registered_students",
-            joinColumns = @JoinColumn(name = "registration_id"),
-            inverseJoinColumns = @JoinColumn(name = "student_id")
-    )
-    private List<Student> students;
+    @OneToMany(mappedBy = "registration")
+    private List<StudentRecord> studentRecords;
     @ManyToOne
     @JoinColumn(nullable = false, name = "consultation_id")
     private Consultation consultation;

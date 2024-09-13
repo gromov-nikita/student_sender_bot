@@ -23,18 +23,24 @@ public class Consultation {
     private int id;
     @ManyToMany
     @JoinTable(
-            name = "teacher_consultations",
+            name = "consultation_teachers",
             joinColumns = @JoinColumn(name = "consultation_id"),
             inverseJoinColumns = @JoinColumn(name = "teacher_id")
     )
     private List<Teacher> teachers;
+    @ManyToMany
+    @JoinTable(
+            name = "consultation_student_groups",
+            joinColumns = @JoinColumn(name = "consultation_id"),
+            inverseJoinColumns = @JoinColumn(name = "student_group_id")
+    )
+    private List<StudentGroup> groups;
     @ManyToOne
     @JoinColumn(nullable = false, name = "subject_id")
     private Subject subject;
     @ManyToOne
     @JoinColumn(nullable = false, name = "session_id")
     private Session session;
-    private ConsultationType type;
     private LocalTime startTime;
     private LocalTime endTime;
 }

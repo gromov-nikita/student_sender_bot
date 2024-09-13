@@ -36,7 +36,9 @@ public class Messaging {
         else {
             ConsultationSurveyState surveyState = surveyService.getSurveyState(message.getChatId());
             surveyState.handleAnswer(message);
-            return surveyState.nextMessage(message.getChatId());
+            SendMessage sendMessage = surveyState.nextMessage(message.getChatId());
+            if(Objects.isNull(sendMessage)) return closeSurvey(message.getChatId());
+            else return sendMessage;
         }
     }
     private SendMessage removeSurvey(Long chatId) {
@@ -50,6 +52,15 @@ public class Messaging {
     }
     private SendMessage startConsultationRegistrationSurvey(Long chatId) {
         surveyService.startSurvey(chatId);
-        return surveyService.getSurveyState(chatId).nextMessage(chatId);
+        SendMessage sendMessage = surveyService.getSurveyState(chatId).nextMessage(chatId);
+        if(Objects.isNull(sendMessage)) return closeSurvey(chatId);
+        else return sendMessage;
+    }
+    private SendMessage closeSurvey(Long chatId) {
+        ConsultationSurveyState surveyState = surveyService.getSurveyState(chatId);
+        surveyService.removeSurveyState(chatId);
+        return getDefaultMessage(chatId,
+                "Вы успешно прошли регистрацию! \nДанные которые вы ввели:\n" + surveyState.toString()
+        );
     }
 }

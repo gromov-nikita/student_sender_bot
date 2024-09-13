@@ -29,4 +29,5 @@ public class SurveyService {
     public boolean isContain(Long chatId) {
         return surveyStateStorage.containsKey(chatId);
     }
+
 }

@@ -13,14 +13,12 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 @Builder
-public class Student {
+public class StudentGroup {
     @Id
     @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
     private String name;
-    private String phoneNumber;
-    private String groupName;
-    @ManyToMany(mappedBy = "students")
-    private List<Registration> registrations;
+    @ManyToMany(mappedBy = "groups")
+    private List<Consultation> consultations;
 }

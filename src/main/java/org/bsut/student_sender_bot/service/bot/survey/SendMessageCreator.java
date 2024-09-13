@@ -82,7 +82,31 @@ public class SendMessageCreator {
         replyKeyboardMarkup.setKeyboard(keyboard);
         return replyKeyboardMarkup;
     }
+    public static <T> SendMessage getReplyKeyboardMessage(Long chatId, String textToSend, List<List<T>> dataMatrix) {
+        return SendMessage.builder()
+                .chatId(chatId)
+                .text(textToSend)
+                .replyMarkup(generateReplyKeyboard(dataMatrix))
+                .build();
+    }
 
+    private static <T> ReplyKeyboardMarkup generateReplyKeyboard(List<List<T>> dataMatrix) {
+        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+        replyKeyboardMarkup.setResizeKeyboard(true);
+        replyKeyboardMarkup.setOneTimeKeyboard(true);
+        List<KeyboardRow> keyboard = new ArrayList<>();
+        for (List<T> row : dataMatrix) {
+            KeyboardRow keyboardRow = new KeyboardRow();
+            for (T data : row) {
+                KeyboardButton button = new KeyboardButton();
+                button.setText(data.toString());
+                keyboardRow.add(button);
+            }
+            keyboard.add(keyboardRow);
+        }
+        replyKeyboardMarkup.setKeyboard(keyboard);
+        return replyKeyboardMarkup;
+    }
 
 
 }

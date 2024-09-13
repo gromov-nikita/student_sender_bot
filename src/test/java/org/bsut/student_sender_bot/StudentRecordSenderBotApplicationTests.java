@@ -9,7 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @SpringBootTest
-class StudentSenderBotApplicationTests {
+class StudentRecordSenderBotApplicationTests {
 
     @Test
     void contextLoads() {

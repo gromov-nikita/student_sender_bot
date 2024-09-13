@@ -3,9 +3,15 @@ package org.bsut.student_sender_bot.service.bot.survey;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import one.util.streamex.StreamEx;
+import org.apache.poi.ss.formula.functions.T;
 import org.bsut.student_sender_bot.entity.Session;
+import org.bsut.student_sender_bot.entity.StudentGroup;
+import org.bsut.student_sender_bot.entity.enums.ConsultationType;
 import org.bsut.student_sender_bot.service.DateParser;
 import org.bsut.student_sender_bot.service.data.SessionService;
+import org.bsut.student_sender_bot.service.data.StudentGroupService;
+import org.bsut.student_sender_bot.service.data.SubjectService;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.data.util.Pair;
@@ -15,8 +21,12 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.bsut.student_sender_bot.service.bot.survey.SendMessageCreator.*;
 
@@ -28,6 +38,8 @@ import static org.bsut.student_sender_bot.service.bot.survey.SendMessageCreator.
 public class ConsultationSurveyState implements Survey {
 
     private final SessionService sessionService;
+    private final StudentGroupService studentGroupService;
+    private final SubjectService subjectService;
     private final DateParser dateParser;
 
     private LocalDate date;
@@ -43,9 +55,9 @@ public class ConsultationSurveyState implements Survey {
         if (Objects.isNull(date)) return getDateMessage(chatId);
         else if(Objects.isNull(name)) return getDefaultMessage(chatId,"Введите ваше Ф.И.О.");
         else if(Objects.isNull(phoneNumber)) return getDefaultMessage(chatId,"Введите ваш номер телефона в формате +375 (**) ***-**-**");
-        else if(Objects.isNull(groupName)) return getDefaultMessage(chatId,"Введите название группы");
-        else if(Objects.isNull(subjectName)) return null;
-        else if(Objects.isNull(typeName)) return null;
+        else if(Objects.isNull(groupName)) return getStudentGroupMessage(chatId);
+        else if(Objects.isNull(subjectName)) return getSubjectMessage(chatId);
+        else if(Objects.isNull(typeName)) return getTypeMessage(chatId);
         else return null;
     }
 
@@ -65,8 +77,23 @@ public class ConsultationSurveyState implements Survey {
                 dateParser.getConsultationDateGroup(Pair.of(currentSession.getStartDate(),currentSession.getEndDate()))
         );
     }
-    private SendMessage getSubjectMessage() {
-
+    private SendMessage getStudentGroupMessage(Long chatId) {
+        return getReplyKeyboardMessage(chatId,
+                "Выберите вашу группу: ",
+                split(StreamEx.of(studentGroupService.findAll()).map(StudentGroup::getName).sorted().toList(),2)
+        );
+    }
+    private SendMessage getSubjectMessage(Long chatId) {
+        return getReplyKeyboardMessage(chatId,
+                "Выберите предмет: ",
+                split(StreamEx.of(subjectService.findAll()).map(StudentGroup::getName).sorted().toList(),1)
+        );
+    }
+    private SendMessage getTypeMessage(Long chatId) {
+        return getReplyKeyboardMessage(chatId,
+                "Выберите цель записи: ",
+                split(Arrays.stream(ConsultationType.values()).toList(),1)
+        );
     }
     private void handleDateMessage(Message message) {
         this.date = LocalDate.parse(message.getText(),DateTimeFormatter.ofPattern("dd-MM-yyyy"));
@@ -85,5 +112,21 @@ public class ConsultationSurveyState implements Survey {
     }
     private void handleTypeNameMessage(Message message) {
         this.typeName = message.getText();
+    }
+    private <T> List<List<T>> split(List<T> list, Integer chunkSize) {
+        return IntStream.range(0, (list.size() + chunkSize - 1) / chunkSize)
+                .mapToObj(i -> list.subList(i * chunkSize, Math.min(i * chunkSize + chunkSize, list.size())))
+                .collect(Collectors.toList());
+    }
+    @Override
+    public String toString() {
+        return "consultationSurveyState : {" +
+                ", \ndate: " + date + "," +
+                ", \nname: \"" + name + "\"," +
+                ", \nphoneNumber: \"" + phoneNumber + "\"," +
+                ", \ngroupName: \"" + groupName + "\"," +
+                ", \nsubjectName: \"" + subjectName + "\"," +
+                ", \ntypeName: \"" + typeName + "\"," +
+                "\n}";
     }
 }
