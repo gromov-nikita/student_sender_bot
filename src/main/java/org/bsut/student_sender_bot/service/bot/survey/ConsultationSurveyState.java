@@ -4,9 +4,9 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import one.util.streamex.StreamEx;
-import org.apache.poi.ss.formula.functions.T;
 import org.bsut.student_sender_bot.entity.Session;
 import org.bsut.student_sender_bot.entity.StudentGroup;
+import org.bsut.student_sender_bot.entity.Subject;
 import org.bsut.student_sender_bot.entity.enums.ConsultationType;
 import org.bsut.student_sender_bot.service.DateParser;
 import org.bsut.student_sender_bot.service.data.SessionService;
@@ -86,13 +86,13 @@ public class ConsultationSurveyState implements Survey {
     private SendMessage getSubjectMessage(Long chatId) {
         return getReplyKeyboardMessage(chatId,
                 "Выберите предмет: ",
-                split(StreamEx.of(subjectService.findAll()).map(StudentGroup::getName).sorted().toList(),1)
+                split(StreamEx.of(subjectService.findAll()).map(Subject::getName).sorted().toList(),1)
         );
     }
     private SendMessage getTypeMessage(Long chatId) {
         return getReplyKeyboardMessage(chatId,
                 "Выберите цель записи: ",
-                split(Arrays.stream(ConsultationType.values()).toList(),1)
+                split(Arrays.stream(ConsultationType.values()).map(ConsultationType::getType).toList(),1)
         );
     }
     private void handleDateMessage(Message message) {
