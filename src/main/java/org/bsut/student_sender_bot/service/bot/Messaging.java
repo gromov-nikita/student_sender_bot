@@ -2,7 +2,7 @@ package org.bsut.student_sender_bot.service.bot;
 
 import lombok.RequiredArgsConstructor;
 import org.bsut.student_sender_bot.service.bot.enums.StudentSenderBotCommand;
-import org.bsut.student_sender_bot.service.bot.survey.SendMessageCreator;
+import org.bsut.student_sender_bot.service.bot.survey.ConsultationSurveyState;
 import org.bsut.student_sender_bot.service.bot.survey.SurveyService;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -21,7 +21,7 @@ public class Messaging {
     public SendMessage getAnswer(Message message) {
         if(isSurvey(message)) return doSurvey(message);
         else return switch (message.getText()) {
-            case String text when text.equals(REG.getCommand()) -> getDefaultMessage(message.getChatId(),REG.getCommandDescription());
+            case String text when text.equals(REG.getCommand()) -> startConsultationRegistrationSurvey(message.getChatId());
             case String text when text.equals(COMMANDS.getCommand()) -> getDefaultMessage(message.getChatId(),getAllCommandInfo());
             case String text when text.equals(ID.getCommand()) -> getDefaultMessage(message.getChatId(),"Ваш id: " + message.getChatId());
             case String text when text.equals("/start") -> getDefaultMessage(message.getChatId(),"Привет, " + message.getChat().getFirstName() + ", вот список всех доступных команд: \n" + getAllCommandInfo());
@@ -32,15 +32,24 @@ public class Messaging {
         return surveyService.isContain(message.getChatId());
     }
     private SendMessage doSurvey(Message message) {
-        if(message.getText().equals(STOP.getCommand())) return removeSurvey(message);
-        else return new SendMessage();
+        if(message.getText().equals(STOP.getCommand())) return removeSurvey(message.getChatId());
+        else {
+            ConsultationSurveyState surveyState = surveyService.getSurveyState(message.getChatId());
+            surveyState.handleAnswer(message);
+            return surveyState.nextMessage(message.getChatId());
+        }
     }
-    private SendMessage removeSurvey(Message message) {
-        return getDefaultMessage(message.getChatId(),"Вы успешно вышли из опроса. Теперь вы можете вводить команды");
+    private SendMessage removeSurvey(Long chatId) {
+        surveyService.removeSurveyState(chatId);
+        return getDefaultMessage(chatId,"Вы успешно вышли из опроса. Теперь вы можете вводить команды");
     }
     private String getIncorrectCommandText(Message message) {
-        StudentSenderBotCommand botCommand = StudentSenderBotCommand.findCommand(message.getText());
+        StudentSenderBotCommand botCommand = findCommand(message.getText());
         if(Objects.isNull(botCommand)) return "Извините, " +  message.getChat().getFirstName() + ", я не знаю такой команды.";
         else return "Извините, " +  message.getChat().getFirstName() + ", но эта команда используется в другом состоянии бота. " + botCommand.getInfo();
+    }
+    private SendMessage startConsultationRegistrationSurvey(Long chatId) {
+        surveyService.startSurvey(chatId);
+        return surveyService.getSurveyState(chatId).nextMessage(chatId);
     }
 }

@@ -3,16 +3,33 @@ package org.bsut.student_sender_bot.service.bot.survey;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.bsut.student_sender_bot.entity.Session;
+import org.bsut.student_sender_bot.service.DateParser;
+import org.bsut.student_sender_bot.service.data.SessionService;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.data.util.Pair;
+import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+import static org.bsut.student_sender_bot.service.bot.survey.SendMessageCreator.*;
+
+@Service
 @RequiredArgsConstructor
 @Setter
 @Getter
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class ConsultationSurveyState implements Survey {
+
+    private final SessionService sessionService;
+    private final DateParser dateParser;
+
     private LocalDate date;
     private String name;
     private String phoneNumber;
@@ -20,22 +37,53 @@ public class ConsultationSurveyState implements Survey {
     private String subjectName;
     private String typeName;
 
+
     @Override
     public SendMessage nextMessage(Long chatId) {
-        if (Objects.isNull(date)) return generateConsultationDate();
-        else if(Objects.isNull(name)) return SendMessageCreator.getDefaultMessage(chatId,"Введите ваше Ф.И.О.");
-        else if(Objects.isNull(phoneNumber)) return SendMessageCreator.getDefaultMessage(chatId,"Введите ваш номер телефона в формате +375 (**) ***-**-**");
-        else if(Objects.isNull(groupName)) return SendMessageCreator.getDefaultMessage(chatId,"Введите название группы");
+        if (Objects.isNull(date)) return getDateMessage(chatId);
+        else if(Objects.isNull(name)) return getDefaultMessage(chatId,"Введите ваше Ф.И.О.");
+        else if(Objects.isNull(phoneNumber)) return getDefaultMessage(chatId,"Введите ваш номер телефона в формате +375 (**) ***-**-**");
+        else if(Objects.isNull(groupName)) return getDefaultMessage(chatId,"Введите название группы");
         else if(Objects.isNull(subjectName)) return null;
         else if(Objects.isNull(typeName)) return null;
         else return null;
     }
 
     @Override
-    public <T> void setState(T value, Consumer<T> setter) {
-        setter.accept(value);
+    public void handleAnswer(Message message) {
+        if (Objects.isNull(date)) handleDateMessage(message);
+        else if(Objects.isNull(name)) handleNameMessage(message);
+        else if(Objects.isNull(phoneNumber)) handlePhoneNumberMessage(message);
+        else if(Objects.isNull(groupName)) handleGroupNameMessage(message);
+        else if(Objects.isNull(subjectName)) handleSubjectNameMessage(message);
+        else if(Objects.isNull(typeName)) handleTypeNameMessage(message);
     }
-    private SendMessage generateConsultationDate() {
-        return null;
+    private SendMessage getDateMessage(Long chatId) {
+        Session currentSession = sessionService.getCurrentSession();
+        return getDateReplyKeyboardMessage(chatId,
+                "Выберите дату посещения консультации: ",
+                dateParser.getConsultationDateGroup(Pair.of(currentSession.getStartDate(),currentSession.getEndDate()))
+        );
+    }
+    private SendMessage getSubjectMessage() {
+
+    }
+    private void handleDateMessage(Message message) {
+        this.date = LocalDate.parse(message.getText(),DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+    }
+    private void handleNameMessage(Message message) {
+        this.name = message.getText();
+    }
+    private void handlePhoneNumberMessage(Message message) {
+        this.phoneNumber = message.getText();
+    }
+    private void handleGroupNameMessage(Message message) {
+        this.groupName = message.getText();
+    }
+    private void handleSubjectNameMessage(Message message) {
+        this.subjectName = message.getText();
+    }
+    private void handleTypeNameMessage(Message message) {
+        this.typeName = message.getText();
     }
 }
