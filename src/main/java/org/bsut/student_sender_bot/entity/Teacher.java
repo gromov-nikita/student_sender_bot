@@ -19,6 +19,6 @@ public class Teacher {
     @Column(nullable = false)
     private long chatId;
     private String name;
-    @ManyToMany(mappedBy = "teachers")
-    private List<Consultation> consultations;
+    @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ConsultationTeacher> consultationTeachers;
 }

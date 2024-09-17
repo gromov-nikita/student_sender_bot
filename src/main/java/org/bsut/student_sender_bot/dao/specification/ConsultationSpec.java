@@ -9,7 +9,7 @@ import java.time.LocalDate;
 @Service
 public class ConsultationSpec {
     public Specification<Consultation> getByGroup(StudentGroup group) {
-        return (root, query, criteriaBuilder) -> criteriaBuilder.isMember(group,root.get(Consultation_.groups));
+        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.join(Consultation_.consultationStudentGroups).get(ConsultationStudentGroup_.studentGroup),group);
     }
     public Specification<Consultation> getBySession(Session session) {
         return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(Consultation_.session),session);

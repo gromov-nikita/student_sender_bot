@@ -19,20 +19,10 @@ public class Consultation {
     @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
-    @ManyToMany
-    @JoinTable(
-            name = "consultation_teachers",
-            joinColumns = @JoinColumn(name = "consultation_id"),
-            inverseJoinColumns = @JoinColumn(name = "teacher_id")
-    )
-    private List<Teacher> teachers;
-    @ManyToMany
-    @JoinTable(
-            name = "consultation_student_groups",
-            joinColumns = @JoinColumn(name = "consultation_id"),
-            inverseJoinColumns = @JoinColumn(name = "student_group_id")
-    )
-    private List<StudentGroup> groups;
+    @OneToMany(mappedBy = "consultation", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ConsultationTeacher> consultationTeachers;
+    @OneToMany(mappedBy = "consultation", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ConsultationStudentGroup> consultationStudentGroups;
     @ManyToOne
     @JoinColumn(nullable = false, name = "subject_id")
     private Subject subject;
