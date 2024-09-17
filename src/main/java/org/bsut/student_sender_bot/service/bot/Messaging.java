@@ -32,13 +32,11 @@ public class Messaging {
         return surveyService.isContain(message.getChatId());
     }
     private SendMessage doSurvey(Message message) {
-        if(message.getText().equals(STOP.getCommand())) return removeSurvey(message.getChatId());
+        if(Objects.nonNull(message.getText()) && message.getText().equals(STOP.getCommand())) return removeSurvey(message.getChatId());
         else {
             ConsultationSurveyState surveyState = surveyService.getSurveyState(message.getChatId());
             surveyState.handleAnswer(message);
-            SendMessage sendMessage = surveyState.nextMessage(message.getChatId());
-            if(Objects.isNull(sendMessage)) return closeSurvey(message.getChatId());
-            else return sendMessage;
+            return handleSendMessage(surveyState.nextMessage(message.getChatId()),message.getChatId());
         }
     }
     private SendMessage removeSurvey(Long chatId) {
@@ -48,11 +46,13 @@ public class Messaging {
     private String getIncorrectCommandText(Message message) {
         StudentSenderBotCommand botCommand = findCommand(message.getText());
         if(Objects.isNull(botCommand)) return "Извините, " +  message.getChat().getFirstName() + ", я не знаю такой команды.";
-        else return "Извините, " +  message.getChat().getFirstName() + ", но эта команда используется в другом состоянии бота. " + botCommand.getInfo();
+        else return "Извините, " +  message.getChat().getFirstName() + ", но эта команда используется в другом состоянии помощника. " + botCommand.getInfo();
     }
     private SendMessage startConsultationRegistrationSurvey(Long chatId) {
         surveyService.startSurvey(chatId);
-        SendMessage sendMessage = surveyService.getSurveyState(chatId).nextMessage(chatId);
+        return handleSendMessage(surveyService.getSurveyState(chatId).nextMessage(chatId),chatId);
+    }
+    private SendMessage handleSendMessage(SendMessage sendMessage,Long chatId) {
         if(Objects.isNull(sendMessage)) return closeSurvey(chatId);
         else return sendMessage;
     }

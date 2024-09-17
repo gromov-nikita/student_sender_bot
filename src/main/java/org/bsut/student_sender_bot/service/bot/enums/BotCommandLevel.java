@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 public enum BotCommandLevel {
-    DEFAULT("Стандартная команда выполняющаяся в исходном состоянии бота."),
+    DEFAULT("Стандартная команда выполняющаяся в исходном состоянии помощника."),
     SURVEY("Команда выполняющаяся в процессе опроса.");
     private final String info;
 }

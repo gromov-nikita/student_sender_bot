@@ -54,7 +54,7 @@ public class ConsultationSurveyState implements Survey {
     public SendMessage nextMessage(Long chatId) {
         if (Objects.isNull(date)) return getDateMessage(chatId);
         else if(Objects.isNull(name)) return getDefaultMessage(chatId,"Введите ваше Ф.И.О.");
-        else if(Objects.isNull(phoneNumber)) return getDefaultMessage(chatId,"Введите ваш номер телефона в формате +375 (**) ***-**-**");
+        else if(Objects.isNull(phoneNumber)) return getPhoneNumberMessage(chatId);
         else if(Objects.isNull(groupName)) return getStudentGroupMessage(chatId);
         else if(Objects.isNull(subjectName)) return getSubjectMessage(chatId);
         else if(Objects.isNull(typeName)) return getTypeMessage(chatId);
@@ -72,27 +72,33 @@ public class ConsultationSurveyState implements Survey {
     }
     private SendMessage getDateMessage(Long chatId) {
         Session currentSession = sessionService.getCurrentSession();
-        return getDateReplyKeyboardMessage(chatId,
+        return getReplyKeyboardMessage(chatId,
                 "Выберите дату посещения консультации: ",
-                dateParser.getConsultationDateGroup(Pair.of(currentSession.getStartDate(),currentSession.getEndDate()))
+                generateDateReplyKeyboard(dateParser.getConsultationDateGroup(Pair.of(currentSession.getStartDate(),currentSession.getEndDate())))
         );
     }
     private SendMessage getStudentGroupMessage(Long chatId) {
         return getReplyKeyboardMessage(chatId,
                 "Выберите вашу группу: ",
-                split(StreamEx.of(studentGroupService.findAll()).map(StudentGroup::getName).sorted().toList(),2)
+                generateReplyKeyboard(split(StreamEx.of(studentGroupService.findAll()).map(StudentGroup::getName).sorted().toList(),2))
         );
     }
     private SendMessage getSubjectMessage(Long chatId) {
         return getReplyKeyboardMessage(chatId,
                 "Выберите предмет: ",
-                split(StreamEx.of(subjectService.findAll()).map(Subject::getName).sorted().toList(),1)
+                generateReplyKeyboard(split(StreamEx.of(subjectService.findAll()).map(Subject::getName).sorted().toList(),1))
+        );
+    }
+    private SendMessage getPhoneNumberMessage(Long chatId) {
+        return getReplyKeyboardMessage(chatId,
+                "Поделитесь номером телефона: ",
+                generatePhoneNumberReplyKeyboard()
         );
     }
     private SendMessage getTypeMessage(Long chatId) {
         return getReplyKeyboardMessage(chatId,
                 "Выберите цель записи: ",
-                split(Arrays.stream(ConsultationType.values()).map(ConsultationType::getType).toList(),1)
+                generateReplyKeyboard(split(Arrays.stream(ConsultationType.values()).map(ConsultationType::getType).toList(),1))
         );
     }
     private void handleDateMessage(Message message) {
@@ -102,7 +108,7 @@ public class ConsultationSurveyState implements Survey {
         this.name = message.getText();
     }
     private void handlePhoneNumberMessage(Message message) {
-        this.phoneNumber = message.getText();
+        this.phoneNumber = "+" + message.getContact().getPhoneNumber();
     }
     private void handleGroupNameMessage(Message message) {
         this.groupName = message.getText();
@@ -121,12 +127,12 @@ public class ConsultationSurveyState implements Survey {
     @Override
     public String toString() {
         return "consultationSurveyState : {" +
-                ", \ndate: " + date + "," +
-                ", \nname: \"" + name + "\"," +
-                ", \nphoneNumber: \"" + phoneNumber + "\"," +
-                ", \ngroupName: \"" + groupName + "\"," +
-                ", \nsubjectName: \"" + subjectName + "\"," +
-                ", \ntypeName: \"" + typeName + "\"," +
+                " \ndate: " + date +
+                ", \nname: \"" + name + "\"" +
+                ", \nphoneNumber: \"" + phoneNumber + "\"" +
+                ", \ngroupName: \"" + groupName + "\"" +
+                ", \nsubjectName: \"" + subjectName + "\"" +
+                ", \ntypeName: \"" + typeName +
                 "\n}";
     }
 }

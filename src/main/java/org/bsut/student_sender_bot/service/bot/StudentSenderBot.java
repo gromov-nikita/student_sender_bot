@@ -36,7 +36,7 @@ public class StudentSenderBot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         Message message = update.getMessage();
-        if(update.hasMessage() && message.hasText()) sendMessage(messaging.getAnswer(message));
+        if(update.hasMessage() && (message.hasText() || message.hasContact()) ) sendMessage(messaging.getAnswer(message));
     }
     private void sendMessage(SendMessage message) {
         try {
