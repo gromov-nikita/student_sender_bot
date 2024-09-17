@@ -70,6 +70,10 @@ public class ConsultationSurveyState implements Survey {
         else if(Objects.isNull(subjectName)) handleSubjectNameMessage(message);
         else if(Objects.isNull(typeName)) handleTypeNameMessage(message);
     }
+    @Override
+    public SendMessage closeSurvey(Long chatId) {
+        return getDefaultMessage(chatId, "Вы успешно прошли регистрацию! \nДанные которые вы ввели:\n" + this);
+    }
     private SendMessage getDateMessage(Long chatId) {
         Session currentSession = sessionService.getCurrentSession();
         return getReplyKeyboardMessage(chatId,

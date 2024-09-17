@@ -6,4 +6,5 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 public interface Survey {
     SendMessage nextMessage(Long chatId);
     void handleAnswer(Message message);
+    SendMessage closeSurvey(Long chatId);
 }

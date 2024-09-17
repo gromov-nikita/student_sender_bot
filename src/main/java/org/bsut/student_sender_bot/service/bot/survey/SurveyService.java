@@ -12,19 +12,19 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 @RequiredArgsConstructor
 public class SurveyService {
-    private final Map<Long, ConsultationSurveyState> surveyStateStorage = new ConcurrentHashMap<>();
+    private final Map<Long, Survey> surveyStateStorage = new ConcurrentHashMap<>();
     private final ApplicationContext appContext;
 
     public void startSurvey(Long chatId) {
         surveyStateStorage.put(chatId, appContext.getBean(ConsultationSurveyState.class));
     }
 
-    public ConsultationSurveyState getSurveyState(Long chatId) {
+    public Survey getSurveyState(Long chatId) {
         return surveyStateStorage.get(chatId);
     }
 
-    public void removeSurveyState(Long chatId) {
-        surveyStateStorage.remove(chatId);
+    public Survey removeSurveyState(Long chatId) {
+        return surveyStateStorage.remove(chatId);
     }
     public boolean isContain(Long chatId) {
         return surveyStateStorage.containsKey(chatId);

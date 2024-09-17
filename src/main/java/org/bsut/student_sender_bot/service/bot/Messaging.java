@@ -3,6 +3,7 @@ package org.bsut.student_sender_bot.service.bot;
 import lombok.RequiredArgsConstructor;
 import org.bsut.student_sender_bot.service.bot.enums.StudentSenderBotCommand;
 import org.bsut.student_sender_bot.service.bot.survey.ConsultationSurveyState;
+import org.bsut.student_sender_bot.service.bot.survey.Survey;
 import org.bsut.student_sender_bot.service.bot.survey.SurveyService;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -34,7 +35,7 @@ public class Messaging {
     private SendMessage doSurvey(Message message) {
         if(Objects.nonNull(message.getText()) && message.getText().equals(STOP.getCommand())) return removeSurvey(message.getChatId());
         else {
-            ConsultationSurveyState surveyState = surveyService.getSurveyState(message.getChatId());
+            Survey surveyState = surveyService.getSurveyState(message.getChatId());
             surveyState.handleAnswer(message);
             return handleSendMessage(surveyState.nextMessage(message.getChatId()),message.getChatId());
         }
@@ -53,14 +54,7 @@ public class Messaging {
         return handleSendMessage(surveyService.getSurveyState(chatId).nextMessage(chatId),chatId);
     }
     private SendMessage handleSendMessage(SendMessage sendMessage,Long chatId) {
-        if(Objects.isNull(sendMessage)) return closeSurvey(chatId);
+        if(Objects.isNull(sendMessage)) return surveyService.removeSurveyState(chatId).closeSurvey(chatId);
         else return sendMessage;
-    }
-    private SendMessage closeSurvey(Long chatId) {
-        ConsultationSurveyState surveyState = surveyService.getSurveyState(chatId);
-        surveyService.removeSurveyState(chatId);
-        return getDefaultMessage(chatId,
-                "Вы успешно прошли регистрацию! \nДанные которые вы ввели:\n" + surveyState.toString()
-        );
     }
 }
