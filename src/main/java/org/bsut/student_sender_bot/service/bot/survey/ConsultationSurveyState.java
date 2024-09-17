@@ -8,7 +8,7 @@ import org.bsut.student_sender_bot.entity.Consultation;
 import org.bsut.student_sender_bot.entity.Session;
 import org.bsut.student_sender_bot.entity.StudentGroup;
 import org.bsut.student_sender_bot.entity.Subject;
-import org.bsut.student_sender_bot.entity.enums.ConsultationType;
+import org.bsut.student_sender_bot.entity.ConsultationType;
 import org.bsut.student_sender_bot.service.DateParser;
 import org.bsut.student_sender_bot.service.data.*;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -20,7 +20,6 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -41,7 +40,8 @@ public class ConsultationSurveyState implements Survey {
     private final DateParser dateParser;
     private final StudentRecordService studentRecordService;
     private final ConsultationService consultationService;
-    private RegistrationService registrationService;
+    private final ConsultationTypeService consultationTypeService;
+    private final RegistrationService registrationService;
 
     private Session session;
     private LocalDate date;
@@ -108,7 +108,7 @@ public class ConsultationSurveyState implements Survey {
     private SendMessage getTypeMessage(Long chatId) {
         return getReplyKeyboardMessage(chatId,
                 "Выберите цель записи: ",
-                generateReplyKeyboard(split(Arrays.stream(ConsultationType.values()).map(ConsultationType::getName).toList(),1))
+                generateReplyKeyboard(split(StreamEx.of(consultationTypeService.findAll()).map(ConsultationType::getName).toList(),1))
         );
     }
     private void handleDateMessage(Message message) {
@@ -127,7 +127,7 @@ public class ConsultationSurveyState implements Survey {
         this.subject = subjectService.findByName(message.getText());
     }
     private void handleTypeNameMessage(Message message) {
-        this.type = ConsultationType.getName(message.getText());
+        this.type = consultationTypeService.findByName(message.getText());
     }
     private <T> List<List<T>> split(List<T> list, Integer chunkSize) {
         return IntStream.range(0, (list.size() + chunkSize - 1) / chunkSize)
@@ -142,7 +142,7 @@ public class ConsultationSurveyState implements Survey {
                 ", \nphoneNumber: \"" + phoneNumber + "\"" +
                 ", \ngroupName: \"" + group.getName() + "\"" +
                 ", \nsubjectName: \"" + subject.getName() + "\"" +
-                ", \ntypeName: \"" + type.getName() +
+                ", \ntypeName: \"" + type.getName() + "\"" +
                 "\n}";
     }
 }

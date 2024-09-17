@@ -5,9 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.bsut.student_sender_bot.entity.enums.ConsultationType;
-
-import java.util.List;
 
 @Entity
 @AllArgsConstructor
@@ -22,7 +19,8 @@ public class StudentRecord {
     private String name;
     private String phoneNumber;
     private String groupName;
-    @Enumerated(EnumType.STRING)
+    @ManyToOne
+    @JoinColumn(nullable = false, name = "consultation_type_id")
     private ConsultationType type;
     @ManyToOne
     @JoinColumn(nullable = false, name = "registration_id")
