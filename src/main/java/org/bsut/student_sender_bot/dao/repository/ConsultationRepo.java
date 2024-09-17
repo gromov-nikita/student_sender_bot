@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ConsultationRepo extends JpaRepository<Consultation,Integer>, JpaSpecificationExecutor<Integer> {
+public interface ConsultationRepo extends JpaRepository<Consultation,Integer>, JpaSpecificationExecutor<Consultation> {
 }

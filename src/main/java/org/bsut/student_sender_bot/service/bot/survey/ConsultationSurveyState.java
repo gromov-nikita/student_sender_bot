@@ -4,14 +4,13 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import one.util.streamex.StreamEx;
+import org.bsut.student_sender_bot.entity.Consultation;
 import org.bsut.student_sender_bot.entity.Session;
 import org.bsut.student_sender_bot.entity.StudentGroup;
 import org.bsut.student_sender_bot.entity.Subject;
 import org.bsut.student_sender_bot.entity.enums.ConsultationType;
 import org.bsut.student_sender_bot.service.DateParser;
-import org.bsut.student_sender_bot.service.data.SessionService;
-import org.bsut.student_sender_bot.service.data.StudentGroupService;
-import org.bsut.student_sender_bot.service.data.SubjectService;
+import org.bsut.student_sender_bot.service.data.*;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.data.util.Pair;
@@ -24,7 +23,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -41,13 +39,17 @@ public class ConsultationSurveyState implements Survey {
     private final StudentGroupService studentGroupService;
     private final SubjectService subjectService;
     private final DateParser dateParser;
+    private final StudentRecordService studentRecordService;
+    private final ConsultationService consultationService;
+    private RegistrationService registrationService;
 
+    private Session session;
     private LocalDate date;
     private String name;
     private String phoneNumber;
-    private String groupName;
-    private String subjectName;
-    private String typeName;
+    private StudentGroup group;
+    private Subject subject;
+    private ConsultationType type;
 
 
     @Override
@@ -55,9 +57,9 @@ public class ConsultationSurveyState implements Survey {
         if (Objects.isNull(date)) return getDateMessage(chatId);
         else if(Objects.isNull(name)) return getDefaultMessage(chatId,"Введите ваше Ф.И.О.");
         else if(Objects.isNull(phoneNumber)) return getPhoneNumberMessage(chatId);
-        else if(Objects.isNull(groupName)) return getStudentGroupMessage(chatId);
-        else if(Objects.isNull(subjectName)) return getSubjectMessage(chatId);
-        else if(Objects.isNull(typeName)) return getTypeMessage(chatId);
+        else if(Objects.isNull(group)) return getStudentGroupMessage(chatId);
+        else if(Objects.isNull(subject)) return getSubjectMessage(chatId);
+        else if(Objects.isNull(type)) return getTypeMessage(chatId);
         else return null;
     }
 
@@ -66,19 +68,19 @@ public class ConsultationSurveyState implements Survey {
         if (Objects.isNull(date)) handleDateMessage(message);
         else if(Objects.isNull(name)) handleNameMessage(message);
         else if(Objects.isNull(phoneNumber)) handlePhoneNumberMessage(message);
-        else if(Objects.isNull(groupName)) handleGroupNameMessage(message);
-        else if(Objects.isNull(subjectName)) handleSubjectNameMessage(message);
-        else if(Objects.isNull(typeName)) handleTypeNameMessage(message);
+        else if(Objects.isNull(group)) handleGroupNameMessage(message);
+        else if(Objects.isNull(subject)) handleSubjectNameMessage(message);
+        else if(Objects.isNull(type)) handleTypeNameMessage(message);
     }
     @Override
     public SendMessage closeSurvey(Long chatId) {
         return getDefaultMessage(chatId, "Вы успешно прошли регистрацию! \nДанные которые вы ввели:\n" + this);
     }
     private SendMessage getDateMessage(Long chatId) {
-        Session currentSession = sessionService.getCurrentSession();
+        this.session = sessionService.getCurrentSession();
         return getReplyKeyboardMessage(chatId,
                 "Выберите дату посещения консультации: ",
-                generateDateReplyKeyboard(dateParser.getConsultationDateGroup(Pair.of(currentSession.getStartDate(),currentSession.getEndDate())))
+                generateDateReplyKeyboard(dateParser.getConsultationDateGroup(Pair.of(session.getStartDate(),session.getEndDate())))
         );
     }
     private SendMessage getStudentGroupMessage(Long chatId) {
@@ -90,7 +92,11 @@ public class ConsultationSurveyState implements Survey {
     private SendMessage getSubjectMessage(Long chatId) {
         return getReplyKeyboardMessage(chatId,
                 "Выберите предмет: ",
-                generateReplyKeyboard(split(StreamEx.of(subjectService.findAll()).map(Subject::getName).sorted().toList(),1))
+                generateReplyKeyboard(split(
+                        StreamEx.of(consultationService.findBySessionAndGroup(session,group))
+                                .map(Consultation::getSubject).map(Subject::getName).sorted().toList(),
+                        1
+                ))
         );
     }
     private SendMessage getPhoneNumberMessage(Long chatId) {
@@ -102,7 +108,7 @@ public class ConsultationSurveyState implements Survey {
     private SendMessage getTypeMessage(Long chatId) {
         return getReplyKeyboardMessage(chatId,
                 "Выберите цель записи: ",
-                generateReplyKeyboard(split(Arrays.stream(ConsultationType.values()).map(ConsultationType::getType).toList(),1))
+                generateReplyKeyboard(split(Arrays.stream(ConsultationType.values()).map(ConsultationType::getName).toList(),1))
         );
     }
     private void handleDateMessage(Message message) {
@@ -115,13 +121,13 @@ public class ConsultationSurveyState implements Survey {
         this.phoneNumber = "+" + message.getContact().getPhoneNumber();
     }
     private void handleGroupNameMessage(Message message) {
-        this.groupName = message.getText();
+        this.group = studentGroupService.findByName(message.getText());
     }
     private void handleSubjectNameMessage(Message message) {
-        this.subjectName = message.getText();
+        this.subject = subjectService.findByName(message.getText());
     }
     private void handleTypeNameMessage(Message message) {
-        this.typeName = message.getText();
+        this.type = ConsultationType.getName(message.getText());
     }
     private <T> List<List<T>> split(List<T> list, Integer chunkSize) {
         return IntStream.range(0, (list.size() + chunkSize - 1) / chunkSize)
@@ -134,9 +140,9 @@ public class ConsultationSurveyState implements Survey {
                 " \ndate: " + date +
                 ", \nname: \"" + name + "\"" +
                 ", \nphoneNumber: \"" + phoneNumber + "\"" +
-                ", \ngroupName: \"" + groupName + "\"" +
-                ", \nsubjectName: \"" + subjectName + "\"" +
-                ", \ntypeName: \"" + typeName +
+                ", \ngroupName: \"" + group.getName() + "\"" +
+                ", \nsubjectName: \"" + subject.getName() + "\"" +
+                ", \ntypeName: \"" + type.getName() +
                 "\n}";
     }
 }

@@ -15,4 +15,7 @@ public class StudentGroupService {
     public List<StudentGroup> findAll() {
         return studentGroupRepo.findAll();
     }
+    public StudentGroup findByName(String name) {
+        return studentGroupRepo.findByName(name);
+    }
 }

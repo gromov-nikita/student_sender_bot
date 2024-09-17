@@ -15,4 +15,7 @@ public class SubjectService {
     public List<Subject> findAll() {
         return subjectRepo.findAll();
     }
+    public Subject findByName(String name) {
+        return subjectRepo.findByName(name);
+    }
 }

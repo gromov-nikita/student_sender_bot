@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface StudentGroupRepo extends JpaRepository<StudentGroup,Integer>, JpaSpecificationExecutor<StudentGroup> {
+    StudentGroup findByName(String name);
 }

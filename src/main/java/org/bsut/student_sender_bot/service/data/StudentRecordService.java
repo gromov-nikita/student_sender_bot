@@ -6,6 +6,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class StudentService {
+public class StudentRecordService {
     private final StudentRepo studentRepo;
 }
