@@ -1,5 +1,7 @@
 package org.bsut.student_sender_bot.service.bot;
 
+import one.util.streamex.StreamEx;
+import org.apache.poi.ss.formula.functions.T;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
@@ -9,6 +11,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static org.bsut.student_sender_bot.service.date.DateFormatterCreator.getUserLocalDateFormatter;
 
@@ -23,51 +26,29 @@ public class SendMessageCreator {
                 .replyMarkup(keyboard)
                 .build();
     }
+    private static ReplyKeyboardMarkup getReplyKeyboard(List<KeyboardRow> keyboard) {
+        return ReplyKeyboardMarkup.builder().resizeKeyboard(true).oneTimeKeyboard(true).keyboard(keyboard).build();
+    }
     public static ReplyKeyboardMarkup generateDateReplyKeyboard(List<List<LocalDate>> dateMatrix) {
-        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
-        replyKeyboardMarkup.setResizeKeyboard(true);
-        replyKeyboardMarkup.setOneTimeKeyboard(true);
-        List<KeyboardRow> keyboard = new ArrayList<>();
-        for (List<LocalDate> row : dateMatrix) {
-            KeyboardRow keyboardRow = new KeyboardRow();
-            for (LocalDate date : row) {
-                KeyboardButton button = new KeyboardButton();
-                button.setText(date.format(getUserLocalDateFormatter()));
-                keyboardRow.add(button);
-            }
-            keyboard.add(keyboardRow);
-        }
-        replyKeyboardMarkup.setKeyboard(keyboard);
-        return replyKeyboardMarkup;
+        return getReplyKeyboard(getDateKeyboardRows(dateMatrix));
+    }
+    private static List<KeyboardRow> getDateKeyboardRows(List<List<LocalDate>> dataMatrix) {
+        return StreamEx.of(dataMatrix).map(row ->
+                StreamEx.of(row).map(date->date.format(getUserLocalDateFormatter())).map(KeyboardButton::new).toCollection(KeyboardRow::new)
+        ).toList();
     }
     public static <T> ReplyKeyboardMarkup generateReplyKeyboard(List<List<T>> dataMatrix) {
-        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
-        replyKeyboardMarkup.setResizeKeyboard(true);
-        replyKeyboardMarkup.setOneTimeKeyboard(true);
-        List<KeyboardRow> keyboard = new ArrayList<>();
-        for (List<T> row : dataMatrix) {
-            KeyboardRow keyboardRow = new KeyboardRow();
-            for (T data : row) {
-                KeyboardButton button = new KeyboardButton();
-                button.setText(data.toString());
-                keyboardRow.add(button);
-            }
-            keyboard.add(keyboardRow);
-        }
-        replyKeyboardMarkup.setKeyboard(keyboard);
-        return replyKeyboardMarkup;
+        return getReplyKeyboard(getKeyboardRows(dataMatrix));
+    }
+    private static <T> List<KeyboardRow> getKeyboardRows(List<List<T>> dataMatrix) {
+        return StreamEx.of(dataMatrix).map(row ->
+                StreamEx.of(row).map(Objects::toString).map(KeyboardButton::new).toCollection(KeyboardRow::new)
+        ).toList();
     }
     public static ReplyKeyboardMarkup generatePhoneNumberReplyKeyboard() {
-        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
-        List<KeyboardRow> keyboard = new ArrayList<>();
-        KeyboardRow row = new KeyboardRow();
-        KeyboardButton contactButton = new KeyboardButton("Отправить номер телефона");
-        contactButton.setRequestContact(true); // Важно!
-        row.add(contactButton);
-        keyboard.add(row);
-        replyKeyboardMarkup.setKeyboard(keyboard);
-        replyKeyboardMarkup.setResizeKeyboard(true);
-        return replyKeyboardMarkup;
+        return getReplyKeyboard(List.of(new KeyboardRow(
+                List.of(KeyboardButton.builder().text("Отправить номер телефона").requestContact(true).build())
+        )));
     }
 
 
