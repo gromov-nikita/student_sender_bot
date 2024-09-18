@@ -134,7 +134,7 @@ public class RegistrationSurvey implements Survey {
     }
     private SendMessage getTypeMessage(Long chatId) {
         return messageCreator.getReplyKeyboardMessage(chatId,
-                "Выберите цель записи. ",
+                "Выберите цель записи.",
                 replyKeyboardCreator.generateReplyKeyboard(split(
                         StreamEx.of(consultationTypeService.findAll()).map(ConsultationType::getName).toList(),
                         1
@@ -148,7 +148,7 @@ public class RegistrationSurvey implements Survey {
         this.name = message.getText();
     }
     private void handlePhoneNumberMessage(Message message) {
-        this.phoneNumber = "+" + message.getContact().getPhoneNumber();
+        this.phoneNumber = message.getContact().getPhoneNumber();
     }
     private void handleGroupNameMessage(Message message) {
         this.group = studentGroupService.findByName(message.getText());

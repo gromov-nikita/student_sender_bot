@@ -11,6 +11,7 @@ import static org.bsut.student_sender_bot.service.bot.enums.BotCommandLevel.*;
 public enum StudentSenderBotCommand {
     COMMANDS("/commands","Команда, отвечающая за вывод списка всех команд с их описанием.",DEFAULT),
     REG("/reg","Команда, отвечающая за регистрацию на консультацию. После ее ввода начнется опрос.",DEFAULT),
+    REG_INF("/regInfo","Команда, отвечающая за предоставление информации о предстоящих консультациях, на которые вы записаны. После ее ввода начнется опрос.",DEFAULT),
     ID("/id","Команда, отвечающая за вывод id вашего telegram.",DEFAULT),
     STOP("/stop","Команда, отвечающая за прекращение опроса.",SURVEY);
     private final String command;

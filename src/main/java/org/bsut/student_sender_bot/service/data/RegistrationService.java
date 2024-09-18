@@ -2,18 +2,22 @@ package org.bsut.student_sender_bot.service.data;
 
 import lombok.RequiredArgsConstructor;
 import org.bsut.student_sender_bot.dao.repository.RegistrationRepo;
+import org.bsut.student_sender_bot.dao.specification.RegistrationSpec;
 import org.bsut.student_sender_bot.entity.Consultation;
 import org.bsut.student_sender_bot.entity.Registration;
 import org.bsut.student_sender_bot.entity.StudentRecord;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
 public class RegistrationService {
     private final RegistrationRepo registrationRepo;
+    private final RegistrationSpec registrationSpec;
 
     public Registration save(Registration registration) {
         return registrationRepo.save(registration);
@@ -25,5 +29,13 @@ public class RegistrationService {
     }
     public Registration findByConsultationAndDate(Consultation consultation, LocalDate date) {
         return registrationRepo.findByConsultationAndDate(consultation, date);
+    }
+    public List<Registration> findAllByPhoneNumberAndDateAfter(String phoneNumber, LocalDate localDate) {
+        return registrationRepo.findAll(
+                Specification.allOf(
+                        registrationSpec.getPhoneNumber(phoneNumber),
+                        registrationSpec.getDateAfter(localDate)
+                )
+        );
     }
 }
