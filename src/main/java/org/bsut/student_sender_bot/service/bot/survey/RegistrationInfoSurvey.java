@@ -59,7 +59,7 @@ public class RegistrationInfoSurvey implements Survey {
         );
     }
     private String stringify(Registration registration) {
-        return "Дата: " +
+        return "Ваш список запланированных консультаций:\nДата: " +
                 registration.getDate().format(dateFormatterCreator.getUserLocalDateFormatter()) + ".\n" +
                 "C " + registration.getConsultation().getStartTime() + " до " +
                 registration.getConsultation().getEndTime() + ".\n" +

@@ -7,6 +7,6 @@ import java.time.format.DateTimeFormatter;
 @Service
 public class DateFormatterCreator {
     public DateTimeFormatter getUserLocalDateFormatter() {
-        return DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        return DateTimeFormatter.ofPattern("dd.MM.yyyy");
     }
 }
