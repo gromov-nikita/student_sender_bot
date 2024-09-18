@@ -4,8 +4,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.format.DateTimeFormatter;
 
+@Service
 public class DateFormatterCreator {
-    public static DateTimeFormatter getUserLocalDateFormatter() {
+    public DateTimeFormatter getUserLocalDateFormatter() {
         return DateTimeFormatter.ofPattern("dd-MM-yyyy");
     }
 }
