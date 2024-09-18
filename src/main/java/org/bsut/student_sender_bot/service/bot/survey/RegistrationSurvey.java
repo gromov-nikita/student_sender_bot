@@ -23,6 +23,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static org.bsut.student_sender_bot.service.bot.ReplyKeyBoardCreator.*;
 import static org.bsut.student_sender_bot.service.bot.SendMessageCreator.*;
 import static org.bsut.student_sender_bot.service.date.DateFormatterCreator.getUserLocalDateFormatter;
 
@@ -96,8 +97,15 @@ public class RegistrationSurvey implements Survey {
         this.session = sessionService.getCurrentSession();
         return getReplyKeyboardMessage(chatId,
                 "Выберите дату посещения консультации. ",
-                generateDateReplyKeyboard(dateParser.getConsultationDateGroup(Pair.of(session.getStartDate(),session.getEndDate())))
+                generateReplyKeyboard(stringify(
+                        dateParser.getConsultationDateGroup(Pair.of(session.getStartDate(),session.getEndDate()))
+                ))
         );
+    }
+    private List<List<String>> stringify(List<List<LocalDate>> dateGroup) {
+        return StreamEx.of(dateGroup).map(row ->
+                StreamEx.of(row).map(date -> date.format(getUserLocalDateFormatter())).toList()
+        ).toList();
     }
     private SendMessage getStudentGroupMessage(Long chatId) {
         return getReplyKeyboardMessage(chatId,
