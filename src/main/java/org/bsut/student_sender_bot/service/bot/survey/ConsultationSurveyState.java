@@ -79,13 +79,13 @@ public class ConsultationSurveyState implements Survey {
     private SendMessage getDateMessage(Long chatId) {
         this.session = sessionService.getCurrentSession();
         return getReplyKeyboardMessage(chatId,
-                "Выберите дату посещения консультации: ",
+                "Выберите дату посещения консультации. ",
                 generateDateReplyKeyboard(dateParser.getConsultationDateGroup(Pair.of(session.getStartDate(),session.getEndDate())))
         );
     }
     private SendMessage getStudentGroupMessage(Long chatId) {
         return getReplyKeyboardMessage(chatId,
-                "Выберите вашу группу: ",
+                "Выберите вашу группу. Если вашей группы нет в списке, значит у группы нет доступных консультаций.",
                 generateReplyKeyboard(split(StreamEx.of(
                         studentGroupService.getStudentGroupsWithConsultationsInSession(session)
                 ).map(StudentGroup::getName).sorted().toList(),2))
@@ -93,7 +93,7 @@ public class ConsultationSurveyState implements Survey {
     }
     private SendMessage getSubjectMessage(Long chatId) {
         return getReplyKeyboardMessage(chatId,
-                "Выберите предмет: ",
+                "Выберите предмет. ",
                 generateReplyKeyboard(split(
                         StreamEx.of(consultationService.findBySessionAndGroup(session,group))
                                 .map(Consultation::getSubject).map(Subject::getName).sorted().toList(),
@@ -103,13 +103,13 @@ public class ConsultationSurveyState implements Survey {
     }
     private SendMessage getPhoneNumberMessage(Long chatId) {
         return getReplyKeyboardMessage(chatId,
-                "Поделитесь номером телефона: ",
+                "Поделитесь номером телефона. ",
                 generatePhoneNumberReplyKeyboard()
         );
     }
     private SendMessage getTypeMessage(Long chatId) {
         return getReplyKeyboardMessage(chatId,
-                "Выберите цель записи: ",
+                "Выберите цель записи. ",
                 generateReplyKeyboard(split(StreamEx.of(consultationTypeService.findAll()).map(ConsultationType::getName).toList(),1))
         );
     }
