@@ -6,6 +6,7 @@ import org.bsut.student_sender_bot.dao.specification.ConsultationSpec;
 import org.bsut.student_sender_bot.entity.Consultation;
 import org.bsut.student_sender_bot.entity.Session;
 import org.bsut.student_sender_bot.entity.StudentGroup;
+import org.bsut.student_sender_bot.entity.Subject;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -24,5 +25,14 @@ public class ConsultationService {
                         consultationSpec.getByGroup(group)
                 )
         );
+    }
+    public Consultation findBySessionAndGroupAndSubject(Session session, StudentGroup group, Subject subject) {
+        return consultationRepo.findOne(
+                Specification.allOf(
+                        consultationSpec.getBySession(session),
+                        consultationSpec.getByGroup(group),
+                        consultationSpec.getBySubject(subject)
+                )
+        ).orElseThrow();
     }
 }

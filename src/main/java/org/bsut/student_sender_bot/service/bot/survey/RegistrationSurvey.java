@@ -4,17 +4,15 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import one.util.streamex.StreamEx;
-import org.bsut.student_sender_bot.entity.Consultation;
-import org.bsut.student_sender_bot.entity.Session;
-import org.bsut.student_sender_bot.entity.StudentGroup;
-import org.bsut.student_sender_bot.entity.Subject;
-import org.bsut.student_sender_bot.entity.ConsultationType;
-import org.bsut.student_sender_bot.service.DateParser;
+import org.bsut.student_sender_bot.entity.*;
+import org.bsut.student_sender_bot.service.date.DateFormatterCreator;
+import org.bsut.student_sender_bot.service.date.DateParser;
 import org.bsut.student_sender_bot.service.data.*;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
@@ -25,14 +23,15 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static org.bsut.student_sender_bot.service.bot.survey.SendMessageCreator.*;
+import static org.bsut.student_sender_bot.service.bot.SendMessageCreator.*;
+import static org.bsut.student_sender_bot.service.date.DateFormatterCreator.getUserLocalDateFormatter;
 
 @Service
 @RequiredArgsConstructor
 @Setter
 @Getter
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class ConsultationSurveyState implements Survey {
+public class RegistrationSurvey implements Survey {
 
     private final SessionService sessionService;
     private final StudentGroupService studentGroupService;
@@ -73,8 +72,25 @@ public class ConsultationSurveyState implements Survey {
         else if(Objects.isNull(type)) handleTypeNameMessage(message);
     }
     @Override
+    @Transactional
     public SendMessage closeSurvey(Long chatId) {
-        return getDefaultMessage(chatId, "Вы успешно прошли регистрацию! \nДанные которые вы ввели:\n" + this);
+        StudentRecord record = studentRecordService.save(StudentRecord.builder()
+                .name(name)
+                .phoneNumber(phoneNumber)
+                .groupName(group.getName())
+                .type(type)
+                .registration(registrationService.getOrSave(
+                        consultationService.findBySessionAndGroupAndSubject(session, group, subject), date)
+                ).build()
+        );
+        return getDefaultMessage(chatId, "Вы зарегистрированы на " +
+                record.getRegistration().getDate().format(getUserLocalDateFormatter()) + " число. \nПодходите с " +
+                record.getRegistration().getConsultation().getStartTime() + " до " +
+                record.getRegistration().getConsultation().getEndTime() + "." +
+                "\nК преподавателям:\n" + StreamEx.of(record.getRegistration().getConsultation().getConsultationTeachers())
+                .map(ConsultationTeacher::getTeacher)
+                .map(Teacher::getName).map(name->name + "\n").reduce(String::concat).get()
+        );
     }
     private SendMessage getDateMessage(Long chatId) {
         this.session = sessionService.getCurrentSession();
@@ -114,7 +130,7 @@ public class ConsultationSurveyState implements Survey {
         );
     }
     private void handleDateMessage(Message message) {
-        this.date = LocalDate.parse(message.getText(),DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+        this.date = LocalDate.parse(message.getText(),getUserLocalDateFormatter());
     }
     private void handleNameMessage(Message message) {
         this.name = message.getText();

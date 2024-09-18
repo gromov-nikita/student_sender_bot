@@ -2,7 +2,6 @@ package org.bsut.student_sender_bot.service.bot;
 
 import lombok.RequiredArgsConstructor;
 import org.bsut.student_sender_bot.service.bot.enums.StudentSenderBotCommand;
-import org.bsut.student_sender_bot.service.bot.survey.ConsultationSurveyState;
 import org.bsut.student_sender_bot.service.bot.survey.Survey;
 import org.bsut.student_sender_bot.service.bot.survey.SurveyService;
 import org.springframework.stereotype.Service;
@@ -12,7 +11,7 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import java.util.Objects;
 
 import static org.bsut.student_sender_bot.service.bot.enums.StudentSenderBotCommand.*;
-import static org.bsut.student_sender_bot.service.bot.survey.SendMessageCreator.getDefaultMessage;
+import static org.bsut.student_sender_bot.service.bot.SendMessageCreator.getDefaultMessage;
 
 @Service
 @RequiredArgsConstructor

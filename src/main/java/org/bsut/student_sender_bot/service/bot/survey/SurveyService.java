@@ -2,10 +2,8 @@ package org.bsut.student_sender_bot.service.bot.survey;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -16,7 +14,7 @@ public class SurveyService {
     private final ApplicationContext appContext;
 
     public void startSurvey(Long chatId) {
-        surveyStateStorage.put(chatId, appContext.getBean(ConsultationSurveyState.class));
+        surveyStateStorage.put(chatId, appContext.getBean(RegistrationSurvey.class));
     }
 
     public Survey getSurveyState(Long chatId) {

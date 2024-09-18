@@ -14,4 +14,7 @@ public class ConsultationSpec {
     public Specification<Consultation> getBySession(Session session) {
         return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(Consultation_.session),session);
     }
+    public Specification<Consultation> getBySubject(Subject subject) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(Consultation_.subject),subject);
+    }
 }

@@ -1,4 +1,4 @@
-package org.bsut.student_sender_bot.service;
+package org.bsut.student_sender_bot.service.date;
 
 import lombok.RequiredArgsConstructor;
 import one.util.streamex.StreamEx;
