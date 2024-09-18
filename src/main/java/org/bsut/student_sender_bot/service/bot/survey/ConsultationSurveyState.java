@@ -86,7 +86,9 @@ public class ConsultationSurveyState implements Survey {
     private SendMessage getStudentGroupMessage(Long chatId) {
         return getReplyKeyboardMessage(chatId,
                 "Выберите вашу группу: ",
-                generateReplyKeyboard(split(StreamEx.of(studentGroupService.findAll()).map(StudentGroup::getName).sorted().toList(),2))
+                generateReplyKeyboard(split(StreamEx.of(
+                        studentGroupService.getStudentGroupsWithConsultationsInSession(session)
+                ).map(StudentGroup::getName).sorted().toList(),2))
         );
     }
     private SendMessage getSubjectMessage(Long chatId) {
