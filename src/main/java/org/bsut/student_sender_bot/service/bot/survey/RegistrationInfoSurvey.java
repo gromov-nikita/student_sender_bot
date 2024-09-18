@@ -53,13 +53,14 @@ public class RegistrationInfoSurvey implements Survey {
     @Transactional
     public SendMessage closeSurvey(Long chatId) {
         return messageCreator.getDefaultMessage(chatId,
-                StreamEx.of(registrationService.findAllByPhoneNumberAndDateAfter(phoneNumber, LocalDate.now()))
-                        .sortedBy(Registration::getDate)
-                        .map(this::stringify).map(str->str+"\n").reduce(String::concat).get()
+                "Ваш список запланированных консультаций:\n"+
+                        StreamEx.of(registrationService.findAllByPhoneNumberAndDateAfter(phoneNumber, LocalDate.now()))
+                                .sortedBy(Registration::getDate)
+                                .map(this::stringify).map(str->str+"\n").reduce(String::concat).get()
         );
     }
     private String stringify(Registration registration) {
-        return "Ваш список запланированных консультаций:\nДата: " +
+        return "Дата: " +
                 registration.getDate().format(dateFormatterCreator.getUserLocalDateFormatter()) + ".\n" +
                 "C " + registration.getConsultation().getStartTime() + " до " +
                 registration.getConsultation().getEndTime() + ".\n" +
