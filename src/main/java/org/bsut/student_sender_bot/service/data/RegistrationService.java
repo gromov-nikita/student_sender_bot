@@ -5,7 +5,6 @@ import org.bsut.student_sender_bot.dao.repository.RegistrationRepo;
 import org.bsut.student_sender_bot.dao.specification.RegistrationSpec;
 import org.bsut.student_sender_bot.entity.Consultation;
 import org.bsut.student_sender_bot.entity.Registration;
-import org.bsut.student_sender_bot.entity.StudentRecord;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +33,7 @@ public class RegistrationService {
         return registrationRepo.findAll(
                 Specification.allOf(
                         registrationSpec.getPhoneNumber(phoneNumber),
-                        registrationSpec.getDateAfter(localDate)
+                        registrationSpec.getDateAfterOrEqually(localDate)
                 )
         );
     }

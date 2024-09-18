@@ -14,8 +14,8 @@ public class RegistrationSpec {
                 phoneNumber
         );
     }
-    public Specification<Registration> getDateAfter(LocalDate localDate) {
-        return (root, query, criteriaBuilder) -> criteriaBuilder.greaterThan(
+    public Specification<Registration> getDateAfterOrEqually(LocalDate localDate) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.greaterThanOrEqualTo(
                 root.get(Registration_.date),
                 localDate
         );
