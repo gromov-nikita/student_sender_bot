@@ -53,7 +53,7 @@ public class RegistrationInfoSurvey implements Survey {
     @Transactional
     public SendMessage closeSurvey(Long chatId) {
         return messageCreator.getDefaultMessage(chatId,
-                "Ваш список запланированных консультаций:\n"+
+                "Ваш список запланированных консультаций:\n\n"+
                         StreamEx.of(registrationService.findAllByPhoneNumberAndDateAfter(phoneNumber, LocalDate.now()))
                                 .sortedBy(Registration::getDate)
                                 .map(this::stringify).map(str->str+"\n").reduce(String::concat).get()
