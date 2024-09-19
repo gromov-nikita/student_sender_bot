@@ -16,6 +16,6 @@ public class ConsultationType {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
     private String name;
-    @OneToMany(mappedBy = "type")
+    @OneToMany(mappedBy = "type",fetch = FetchType.LAZY)
     private List<StudentRecord> studentRecords;
 }

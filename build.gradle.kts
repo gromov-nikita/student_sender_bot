@@ -34,7 +34,6 @@ dependencies {
     implementation("javax.xml.bind:jaxb-api:2.4.0-b180830.0359")
     implementation("one.util:streamex:0.8.2")
 
-
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
     annotationProcessor("org.hibernate.orm:hibernate-jpamodelgen:6.6.0.Final")

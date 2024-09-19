@@ -19,9 +19,9 @@ public class Registration {
     @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
-    @OneToMany(mappedBy = "registration")
+    @OneToMany(mappedBy = "registration", fetch = FetchType.LAZY)
     private List<StudentRecord> studentRecords;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "consultation_id")
     private Consultation consultation;
     private LocalDate date;

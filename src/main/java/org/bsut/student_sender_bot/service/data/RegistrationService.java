@@ -29,10 +29,10 @@ public class RegistrationService {
     public Registration findByConsultationAndDate(Consultation consultation, LocalDate date) {
         return registrationRepo.findByConsultationAndDate(consultation, date);
     }
-    public List<Registration> findAllByPhoneNumberAndDateAfter(String phoneNumber, LocalDate localDate) {
+    public List<Registration> findAllByChatIdAndDateAfter(long chatId, LocalDate localDate) {
         return registrationRepo.findAll(
                 Specification.allOf(
-                        registrationSpec.getPhoneNumber(phoneNumber),
+                        registrationSpec.getChatId(chatId),
                         registrationSpec.getDateAfterOrEqually(localDate)
                 )
         );

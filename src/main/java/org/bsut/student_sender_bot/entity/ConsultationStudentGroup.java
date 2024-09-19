@@ -16,11 +16,11 @@ public class ConsultationStudentGroup {
     @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "consultation_id", nullable = false)
     private Consultation consultation;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_group_id", nullable = false)
     private StudentGroup studentGroup;
 }

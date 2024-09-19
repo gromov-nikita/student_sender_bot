@@ -19,10 +19,11 @@ public class StudentRecord {
     private String name;
     private String phoneNumber;
     private String groupName;
-    @ManyToOne
+    private long chatId;
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "consultation_type_id")
     private ConsultationType type;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "registration_id")
     private Registration registration;
 }

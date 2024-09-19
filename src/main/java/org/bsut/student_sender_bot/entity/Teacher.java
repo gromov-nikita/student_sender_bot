@@ -19,6 +19,6 @@ public class Teacher {
     @Column(nullable = false)
     private long chatId;
     private String name;
-    @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<ConsultationTeacher> consultationTeachers;
 }

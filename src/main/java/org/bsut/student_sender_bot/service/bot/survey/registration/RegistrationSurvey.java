@@ -1,4 +1,4 @@
-package org.bsut.student_sender_bot.service.bot.survey;
+package org.bsut.student_sender_bot.service.bot.survey.registration;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -7,6 +7,7 @@ import one.util.streamex.StreamEx;
 import org.bsut.student_sender_bot.entity.*;
 import org.bsut.student_sender_bot.service.bot.ReplyKeyBoardCreator;
 import org.bsut.student_sender_bot.service.bot.SendMessageCreator;
+import org.bsut.student_sender_bot.service.bot.survey.Survey;
 import org.bsut.student_sender_bot.service.date.DateFormatterCreator;
 import org.bsut.student_sender_bot.service.date.DateParser;
 import org.bsut.student_sender_bot.service.data.*;
@@ -19,7 +20,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -74,9 +74,9 @@ public class RegistrationSurvey implements Survey {
         else if(Objects.isNull(type)) handleTypeNameMessage(message);
     }
     @Override
-    @Transactional
     public SendMessage closeSurvey(Long chatId) {
         StudentRecord record = studentRecordService.save(StudentRecord.builder()
+                .chatId(chatId)
                 .name(name)
                 .phoneNumber(phoneNumber)
                 .groupName(group.getName())
