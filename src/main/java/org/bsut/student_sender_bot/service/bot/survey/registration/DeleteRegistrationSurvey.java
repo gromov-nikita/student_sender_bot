@@ -3,6 +3,10 @@ package org.bsut.student_sender_bot.service.bot.survey.registration;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import one.util.streamex.StreamEx;
+import org.bsut.student_sender_bot.entity.Consultation;
+import org.bsut.student_sender_bot.entity.StudentGroup;
+import org.bsut.student_sender_bot.entity.Subject;
 import org.bsut.student_sender_bot.service.bot.ReplyKeyBoardCreator;
 import org.bsut.student_sender_bot.service.bot.SendMessageCreator;
 import org.bsut.student_sender_bot.service.bot.survey.Survey;
@@ -27,10 +31,16 @@ public class DeleteRegistrationSurvey implements Survey {
     private final RegistrationService registrationService;
     private final DateFormatterCreator dateFormatterCreator;
 
-    private String phoneNumber;
+    private StudentGroup group;
+    private Subject subject;
 
     @Override
-    public SendMessage nextMessage(Long chatId) {return null;}
+    public SendMessage nextMessage(Long chatId) {
+        //if(Objects.isNull(group)) return getStudentGroupMessage(chatId);
+        //else if(Objects.isNull(subject)) return getSubjectMessage(chatId);
+        //else
+            return null;
+    }
 
     @Override
     public void handleAnswer(Message message) {}
@@ -39,4 +49,25 @@ public class DeleteRegistrationSurvey implements Survey {
     public SendMessage closeSurvey(Long chatId) {
         return null;
     }
+    /*
+    private SendMessage getStudentGroupMessage(Long chatId) {
+        return messageCreator.getReplyKeyboardMessage(chatId,
+                "Выберите вашу группу. Если вашей группы нет в списке, значит у группы нет доступных консультаций.",
+                replyKeyBoardCreator.generateReplyKeyboard(splitter.split(StreamEx.of(
+                        studentGroupService.getStudentGroupsWithConsultationsInSession(session)
+                ).map(StudentGroup::getName).sorted().toList(),2))
+        );
+    }
+    private SendMessage getSubjectMessage(Long chatId) {
+        return messageCreator.getReplyKeyboardMessage(chatId,
+                "Выберите предмет. ",
+                replyKeyboardCreator.generateReplyKeyboard(splitter.split(
+                        StreamEx.of(consultationService.findBySessionAndGroup(session,group))
+                                .map(Consultation::getSubject).map(Subject::getName).sorted().toList(),
+                        1
+                ))
+        );
+    }
+
+     */
 }

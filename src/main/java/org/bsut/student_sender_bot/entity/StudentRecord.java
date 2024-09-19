@@ -18,7 +18,9 @@ public class StudentRecord {
     private int id;
     private String name;
     private String phoneNumber;
-    private String groupName;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false, name = "student_group_id")
+    private StudentGroup studentGroup;
     private long chatId;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "consultation_type_id")

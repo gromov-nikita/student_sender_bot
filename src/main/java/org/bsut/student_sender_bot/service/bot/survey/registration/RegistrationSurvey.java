@@ -81,7 +81,7 @@ public class RegistrationSurvey implements Survey {
                 .chatId(chatId)
                 .name(name)
                 .phoneNumber(phoneNumber)
-                .groupName(group.getName())
+                .studentGroup(group)
                 .type(type)
                 .registration(registrationService.getOrSave(
                         consultationService.findBySessionAndGroupAndSubject(session, group, subject), date)
