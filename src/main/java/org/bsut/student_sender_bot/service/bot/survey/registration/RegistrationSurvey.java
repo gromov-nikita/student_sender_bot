@@ -11,6 +11,7 @@ import org.bsut.student_sender_bot.service.bot.survey.Survey;
 import org.bsut.student_sender_bot.service.date.DateFormatterCreator;
 import org.bsut.student_sender_bot.service.date.DateParser;
 import org.bsut.student_sender_bot.service.data.*;
+import org.bsut.student_sender_bot.service.listHandler.Splitter;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.data.util.Pair;
@@ -43,6 +44,7 @@ public class RegistrationSurvey implements Survey {
     private final ReplyKeyBoardCreator replyKeyboardCreator;
     private final SendMessageCreator messageCreator;
     private final DateFormatterCreator dateFormatterCreator;
+    private final Splitter splitter;
 
     private Session session;
     private LocalDate date;
@@ -111,7 +113,7 @@ public class RegistrationSurvey implements Survey {
     private SendMessage getStudentGroupMessage(Long chatId) {
         return messageCreator.getReplyKeyboardMessage(chatId,
                 "Выберите вашу группу. Если вашей группы нет в списке, значит у группы нет доступных консультаций.",
-                replyKeyboardCreator.generateReplyKeyboard(split(StreamEx.of(
+                replyKeyboardCreator.generateReplyKeyboard(splitter.split(StreamEx.of(
                         studentGroupService.getStudentGroupsWithConsultationsInSession(session)
                 ).map(StudentGroup::getName).sorted().toList(),2))
         );
@@ -119,7 +121,7 @@ public class RegistrationSurvey implements Survey {
     private SendMessage getSubjectMessage(Long chatId) {
         return messageCreator.getReplyKeyboardMessage(chatId,
                 "Выберите предмет. ",
-                replyKeyboardCreator.generateReplyKeyboard(split(
+                replyKeyboardCreator.generateReplyKeyboard(splitter.split(
                         StreamEx.of(consultationService.findBySessionAndGroup(session,group))
                                 .map(Consultation::getSubject).map(Subject::getName).sorted().toList(),
                         1
@@ -135,7 +137,7 @@ public class RegistrationSurvey implements Survey {
     private SendMessage getTypeMessage(Long chatId) {
         return messageCreator.getReplyKeyboardMessage(chatId,
                 "Выберите цель записи.",
-                replyKeyboardCreator.generateReplyKeyboard(split(
+                replyKeyboardCreator.generateReplyKeyboard(splitter.split(
                         StreamEx.of(consultationTypeService.findAll()).map(ConsultationType::getName).toList(),
                         1
                 ))
@@ -158,11 +160,6 @@ public class RegistrationSurvey implements Survey {
     }
     private void handleTypeNameMessage(Message message) {
         this.type = consultationTypeService.findByName(message.getText());
-    }
-    private <T> List<List<T>> split(List<T> list, Integer chunkSize) {
-        return IntStream.range(0, (list.size() + chunkSize - 1) / chunkSize)
-                .mapToObj(i -> list.subList(i * chunkSize, Math.min(i * chunkSize + chunkSize, list.size())))
-                .collect(Collectors.toList());
     }
     @Override
     public String toString() {
