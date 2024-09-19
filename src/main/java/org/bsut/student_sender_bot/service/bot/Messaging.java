@@ -85,10 +85,9 @@ public class Messaging {
         );
     }
     private String stringify(Registration registration) {
-        return "Дата: " +
-                registration.getDate().format(dateFormatterCreator.getUserLocalDateFormatter()) + ".\n" +
-                "C " + registration.getConsultation().getStartTime() + " до " +
-                registration.getConsultation().getEndTime() + ".\n" +
+        return "Дата: " + registration.getDate().format(dateFormatterCreator.getUserLocalDateFormatter()) + ".\n" +
+                "C " + registration.getConsultation().getStartTime() +
+                " до " + registration.getConsultation().getEndTime() + ".\n" +
                 "Преподаватели:\n" + StreamEx.of(registration.getConsultation().getConsultationTeachers())
                 .map(ConsultationTeacher::getTeacher)
                 .map(Teacher::getName).map(name->name + "\n").reduce(String::concat).get();
