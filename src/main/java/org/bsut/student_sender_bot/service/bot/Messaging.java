@@ -18,6 +18,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 
 import static org.bsut.student_sender_bot.service.bot.enums.StudentSenderBotCommand.*;
@@ -72,9 +73,13 @@ public class Messaging {
         else return sendMessage;
     }
     private SendMessage getRegistrationInfoMessage(Long chatId) {
-        return messageCreator.getDefaultMessage(chatId,
+        List<Registration> registrationGroup = registrationService.findAllByChatIdAndDateAfter(chatId, LocalDate.now());
+        if(registrationGroup.isEmpty()) return messageCreator.getDefaultMessage(chatId,
+                "На данный момент у вас отсутствуют запланированные консультации."
+        );
+        else return messageCreator.getDefaultMessage(chatId,
                 "Ваш список запланированных консультаций:\n\n"+
-                        StreamEx.of(registrationService.findAllByChatIdAndDateAfter(chatId, LocalDate.now()))
+                        StreamEx.of(registrationGroup)
                                 .sortedBy(Registration::getDate)
                                 .map(this::stringify).map(str->str+"\n").reduce(String::concat).get()
         );
