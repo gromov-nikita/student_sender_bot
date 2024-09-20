@@ -40,14 +40,12 @@ public class ReplyKeyboardCreator {
         )),true);
     }
     public ReplyKeyboardMarkup generateCommandsReplyKeyboard(BotCommandLevel botCommandLevel) {
-        return getReplyKeyboard(
-                getKeyboardRows(splitter.split(
-                        StreamEx.of(StudentSenderBotCommand.values())
-                                .filter(command->command.getLevel().equals(botCommandLevel))
-                                .map(StudentSenderBotCommand::getCommand).toList(),
-                        2
-                )),
-                false
-        );
+        return getReplyKeyboard(getKeyboardRows(splitter.split(
+                StreamEx.of(StudentSenderBotCommand.values())
+                        .filter(command->command.getLevel().equals(botCommandLevel))
+                        .map(StudentSenderBotCommand::getCommand).toList(),
+                2
+                )
+        ), false);
     }
 }
