@@ -21,11 +21,11 @@ public class ReplyKeyboardCreator {
     private final Splitter splitter;
 
     public <T> ReplyKeyboardMarkup generateReplyKeyboard(List<List<T>> dataMatrix) {
-        return getReplyKeyboard(getKeyboardRows(dataMatrix));
+        return getReplyKeyboard(getKeyboardRows(dataMatrix),true);
     }
 
-    private ReplyKeyboardMarkup getReplyKeyboard(List<KeyboardRow> keyboard) {
-        return ReplyKeyboardMarkup.builder().resizeKeyboard(true).oneTimeKeyboard(true).keyboard(keyboard).build();
+    private ReplyKeyboardMarkup getReplyKeyboard(List<KeyboardRow> keyboard,boolean oneTimeKeyboard) {
+        return ReplyKeyboardMarkup.builder().resizeKeyboard(true).oneTimeKeyboard(oneTimeKeyboard).keyboard(keyboard).build();
     }
 
     private <T> List<KeyboardRow> getKeyboardRows(List<List<T>> dataMatrix) {
@@ -37,7 +37,7 @@ public class ReplyKeyboardCreator {
     public ReplyKeyboardMarkup generatePhoneNumberReplyKeyboard() {
         return getReplyKeyboard(List.of(new KeyboardRow(
                 List.of(KeyboardButton.builder().text("Отправить номер телефона").requestContact(true).build())
-        )));
+        )),true);
     }
     public ReplyKeyboardMarkup generateCommandsReplyKeyboard(BotCommandLevel botCommandLevel) {
         return getReplyKeyboard(
@@ -46,7 +46,8 @@ public class ReplyKeyboardCreator {
                                 .filter(command->command.getLevel().equals(botCommandLevel))
                                 .map(StudentSenderBotCommand::getCommand).toList(),
                         2
-                ))
+                )),
+                false
         );
     }
 }
