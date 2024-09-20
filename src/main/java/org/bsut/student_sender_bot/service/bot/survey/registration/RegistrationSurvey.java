@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import one.util.streamex.StreamEx;
 import org.bsut.student_sender_bot.entity.*;
+import org.bsut.student_sender_bot.service.bot.enums.BotCommandLevel;
 import org.bsut.student_sender_bot.service.bot.keyboard.reply.ReplyKeyboardCreator;
 import org.bsut.student_sender_bot.service.bot.SendMessageCreator;
 import org.bsut.student_sender_bot.service.bot.survey.Survey;
@@ -84,13 +85,14 @@ public class RegistrationSurvey implements Survey {
                         consultationService.findBySessionAndGroupAndSubject(session, group, subject), date)
                 ).build()
         );
-        return messageCreator.getDefaultMessage(chatId, "Вы зарегистрированы на " +
+        return messageCreator.getReplyKeyboardMessage(chatId, "Вы зарегистрированы на " +
                 record.getRegistration().getDate().format(dateFormatterCreator.getUserLocalDateFormatter()) + " число. \nПодходите с " +
                 record.getRegistration().getConsultation().getStartTime() + " до " +
                 record.getRegistration().getConsultation().getEndTime() + "." +
                 "\nК преподавателям:\n" + StreamEx.of(record.getRegistration().getConsultation().getConsultationTeachers())
                 .map(ConsultationTeacher::getTeacher)
-                .map(Teacher::getName).map(name->name + "\n").reduce(String::concat).get()
+                .map(Teacher::getName).map(name->name + "\n").reduce(String::concat).get(),
+                replyKeyboardCreator.generateCommandsReplyKeyboard(BotCommandLevel.DEFAULT)
         );
     }
     private SendMessage getDateMessage(Long chatId) {

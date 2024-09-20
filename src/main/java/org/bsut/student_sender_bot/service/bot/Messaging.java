@@ -5,10 +5,12 @@ import one.util.streamex.StreamEx;
 import org.bsut.student_sender_bot.entity.ConsultationTeacher;
 import org.bsut.student_sender_bot.entity.StudentRecord;
 import org.bsut.student_sender_bot.entity.Teacher;
+import org.bsut.student_sender_bot.service.bot.enums.BotCommandLevel;
 import org.bsut.student_sender_bot.service.bot.enums.CallbackDataPrefix;
 import org.bsut.student_sender_bot.service.bot.enums.StudentSenderBotCommand;
 import org.bsut.student_sender_bot.service.bot.keyboard.inline.ButtonData;
 import org.bsut.student_sender_bot.service.bot.keyboard.inline.InlineKeyboardCreator;
+import org.bsut.student_sender_bot.service.bot.keyboard.reply.ReplyKeyboardCreator;
 import org.bsut.student_sender_bot.service.bot.survey.registration.RegistrationSurvey;
 import org.bsut.student_sender_bot.service.bot.survey.Survey;
 import org.bsut.student_sender_bot.service.bot.survey.SurveyService;
@@ -35,6 +37,7 @@ public class Messaging {
     private final SendMessageCreator messageCreator;
     private final ApplicationContext appContext;
     private final DateFormatterCreator dateFormatterCreator;
+    private final ReplyKeyboardCreator replyKeyboardCreator;
     private final InlineKeyboardCreator inlineKeyboardCreator;
     private final Splitter splitter;
 
@@ -47,7 +50,7 @@ public class Messaging {
             case String text when text.equals(REG_CANCEL.getCommand()) -> getRegistrationCancelMenuMessage(message.getChatId());
             case String text when text.equals(COMMANDS.getCommand()) -> messageCreator.getDefaultMessage(message.getChatId(),getAllCommandInfo());
             case String text when text.equals(ID.getCommand()) -> messageCreator.getDefaultMessage(message.getChatId(),"Ваш id: " + message.getChatId());
-            case String text when text.equals("/start") -> messageCreator.getDefaultMessage(message.getChatId(),"Привет, " + message.getChat().getFirstName() + ", вот список всех доступных команд: \n" + getAllCommandInfo());
+            case String text when text.equals("/start") -> getStartMessage(message);
             default -> messageCreator.getDefaultMessage(message.getChatId(),getIncorrectCommandText(message));
         };
     }
@@ -91,7 +94,13 @@ public class Messaging {
                                 .map(this::stringify).map(str->str+"\n").reduce(String::concat).get()
         );
     }
-
+    private SendMessage getStartMessage(Message message) {
+        return messageCreator.getReplyKeyboardMessage(
+                message.getChatId(),
+                "Привет, " + "" + message.getChat().getFirstName() + ", вот список всех доступных команд: \n"
+                        + getAllCommandInfo(),
+                replyKeyboardCreator.generateCommandsReplyKeyboard(BotCommandLevel.DEFAULT));
+    }
     private SendMessage getRegistrationCancelMenuMessage(Long chatId) {
         List<StudentRecord> recordGroup = studentRecordService.findAllByChatIdAndDateAfter(chatId, LocalDate.now());
         if(recordGroup.isEmpty()) return messageCreator.getDefaultMessage(chatId,
