@@ -5,26 +5,23 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import one.util.streamex.StreamEx;
 import org.bsut.student_sender_bot.entity.*;
-import org.bsut.student_sender_bot.service.bot.ReplyKeyBoardCreator;
+import org.bsut.student_sender_bot.service.bot.keyboard.reply.ReplyKeyboardCreator;
 import org.bsut.student_sender_bot.service.bot.SendMessageCreator;
 import org.bsut.student_sender_bot.service.bot.survey.Survey;
 import org.bsut.student_sender_bot.service.date.DateFormatterCreator;
 import org.bsut.student_sender_bot.service.date.DateParser;
 import org.bsut.student_sender_bot.service.data.*;
-import org.bsut.student_sender_bot.service.listHandler.Splitter;
+import org.bsut.student_sender_bot.service.list_handler.Splitter;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
@@ -41,7 +38,7 @@ public class RegistrationSurvey implements Survey {
     private final ConsultationService consultationService;
     private final ConsultationTypeService consultationTypeService;
     private final RegistrationService registrationService;
-    private final ReplyKeyBoardCreator replyKeyboardCreator;
+    private final ReplyKeyboardCreator replyKeyboardCreator;
     private final SendMessageCreator messageCreator;
     private final DateFormatterCreator dateFormatterCreator;
     private final Splitter splitter;
@@ -80,6 +77,7 @@ public class RegistrationSurvey implements Survey {
         StudentRecord record = studentRecordService.save(StudentRecord.builder()
                 .chatId(chatId)
                 .name(name)
+                .studentGroup(group)
                 .phoneNumber(phoneNumber)
                 .type(type)
                 .registration(registrationService.getOrSave(

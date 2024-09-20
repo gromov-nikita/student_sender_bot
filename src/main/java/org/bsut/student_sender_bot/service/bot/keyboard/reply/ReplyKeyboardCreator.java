@@ -1,4 +1,4 @@
-package org.bsut.student_sender_bot.service.bot;
+package org.bsut.student_sender_bot.service.bot.keyboard.reply;
 
 import one.util.streamex.StreamEx;
 import org.springframework.stereotype.Service;
@@ -6,13 +6,12 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMar
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
 @Service
-public class ReplyKeyBoardCreator {
+public class ReplyKeyboardCreator {
 
     public <T> ReplyKeyboardMarkup generateReplyKeyboard(List<List<T>> dataMatrix) {
         return getReplyKeyboard(getKeyboardRows(dataMatrix, Objects::toString));

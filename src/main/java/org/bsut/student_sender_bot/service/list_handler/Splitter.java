@@ -1,4 +1,4 @@
-package org.bsut.student_sender_bot.service.listHandler;
+package org.bsut.student_sender_bot.service.list_handler;
 
 import org.springframework.stereotype.Service;
 

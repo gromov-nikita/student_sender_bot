@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface StudentRepo extends JpaRepository<StudentRecord,Integer>, JpaSpecificationExecutor<StudentRecord> {
+public interface StudentRecordRepo extends JpaRepository<StudentRecord,Long>, JpaSpecificationExecutor<StudentRecord> {
 
 }
