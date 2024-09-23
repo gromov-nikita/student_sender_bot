@@ -34,4 +34,7 @@ public class StudentRecordService {
                 )
         );
     }
+    public List<StudentRecord> findAllByDate(LocalDate localDate) {
+        return studentRecordRepo.findAll(studentRecordSpec.getDate(localDate));
+    }
 }

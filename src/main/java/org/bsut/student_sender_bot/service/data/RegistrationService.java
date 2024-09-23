@@ -1,6 +1,7 @@
 package org.bsut.student_sender_bot.service.data;
 
 import lombok.RequiredArgsConstructor;
+import org.bsut.student_sender_bot.dao.criteriaApi.RegistrationCriteriaApi;
 import org.bsut.student_sender_bot.dao.repository.RegistrationRepo;
 import org.bsut.student_sender_bot.dao.specification.RegistrationSpec;
 import org.bsut.student_sender_bot.entity.Consultation;
@@ -17,6 +18,7 @@ import java.util.Objects;
 public class RegistrationService {
     private final RegistrationRepo registrationRepo;
     private final RegistrationSpec registrationSpec;
+    private final RegistrationCriteriaApi registrationCriteriaApi;
 
     public Registration save(Registration registration) {
         return registrationRepo.save(registration);
@@ -39,5 +41,8 @@ public class RegistrationService {
     }
     public List<Registration> findAllByDate(LocalDate localDate) {
         return registrationRepo.findAllByDate(localDate);
+    }
+    public List<Registration> findAllWithStudentRecordsAndDate(LocalDate localDate) {
+        return registrationCriteriaApi.getWithStudentRecordsAndSpec(registrationSpec.getDate(localDate));
     }
 }

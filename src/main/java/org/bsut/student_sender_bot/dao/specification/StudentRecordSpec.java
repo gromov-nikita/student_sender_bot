@@ -35,4 +35,10 @@ public class StudentRecordSpec {
                 chatId
         );
     }
+    public Specification<StudentRecord> getDate(LocalDate localDate) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(
+                root.join(StudentRecord_.registration).get(Registration_.date),
+                localDate
+        );
+    }
 }

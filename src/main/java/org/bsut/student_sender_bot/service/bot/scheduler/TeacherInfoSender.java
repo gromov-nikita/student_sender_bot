@@ -31,7 +31,7 @@ public class TeacherInfoSender {
     @Scheduled(cron = "${cron.send-student.time-interval}")
     @Transactional
     public void sendStudentList() {
-        StreamEx.of(registrationService.findAllByDate(dateHandler.getSaturday())).mapToEntry(
+        StreamEx.of(registrationService.findAllWithStudentRecordsAndDate(dateHandler.getSaturday())).mapToEntry(
                 registration-> StreamEx.of(registration.getConsultation().getConsultationTeachers())
                         .map(ConsultationTeacher::getTeacher)
                         .map(Teacher::getChatId).toList(),
