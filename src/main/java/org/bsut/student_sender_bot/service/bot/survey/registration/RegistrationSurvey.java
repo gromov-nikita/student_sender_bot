@@ -149,7 +149,7 @@ public class RegistrationSurvey implements Survey {
         this.name = message.getText();
     }
     private void handlePhoneNumberMessage(Message message) {
-        this.phoneNumber = message.getContact().getPhoneNumber();
+        this.phoneNumber = message.hasText() ? message.getText() : message.getContact().getPhoneNumber();
     }
     private void handleGroupNameMessage(Message message) {
         this.group = studentGroupService.findByName(message.getText());
