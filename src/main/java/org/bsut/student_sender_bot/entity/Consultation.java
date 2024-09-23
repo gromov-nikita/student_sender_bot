@@ -23,6 +23,8 @@ public class Consultation {
     private List<ConsultationTeacher> consultationTeachers;
     @OneToMany(mappedBy = "consultation", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<ConsultationStudentGroup> consultationStudentGroups;
+    @OneToMany(mappedBy = "consultation", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Registration> registrations;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "subject_id")
     private Subject subject;

@@ -10,7 +10,7 @@ import org.bsut.student_sender_bot.service.bot.keyboard.reply.ReplyKeyboardCreat
 import org.bsut.student_sender_bot.service.bot.SendMessageCreator;
 import org.bsut.student_sender_bot.service.bot.survey.Survey;
 import org.bsut.student_sender_bot.service.date.DateFormatterCreator;
-import org.bsut.student_sender_bot.service.date.DateParser;
+import org.bsut.student_sender_bot.service.date.DateHandler;
 import org.bsut.student_sender_bot.service.data.*;
 import org.bsut.student_sender_bot.service.list_handler.Splitter;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -34,7 +34,7 @@ public class RegistrationSurvey implements Survey {
     private final SessionService sessionService;
     private final StudentGroupService studentGroupService;
     private final SubjectService subjectService;
-    private final DateParser dateParser;
+    private final DateHandler dateHandler;
     private final StudentRecordService studentRecordService;
     private final ConsultationService consultationService;
     private final ConsultationTypeService consultationTypeService;
@@ -100,7 +100,7 @@ public class RegistrationSurvey implements Survey {
         return messageCreator.getReplyKeyboardMessage(chatId,
                 "Выберите дату посещения консультации. ",
                 replyKeyboardCreator.generateReplyKeyboard(stringify(
-                        dateParser.getConsultationDateGroup(Pair.of(session.getStartDate(),session.getEndDate()))
+                        dateHandler.getConsultationDateGroup(Pair.of(session.getStartDate(),session.getEndDate()))
                 ))
         );
     }

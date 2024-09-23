@@ -35,7 +35,7 @@ public class StudentSenderBot extends TelegramLongPollingBot {
         if(update.hasCallbackQuery()) sendMessage(callbackHandler.getAnswer(update.getCallbackQuery().getData(),update.getCallbackQuery().getMessage().getChatId()));
         else if(update.hasMessage() && (message.hasText() || message.hasContact()) ) sendMessage(messaging.getAnswer(message));
     }
-    private void sendMessage(SendMessage message) {
+    public void sendMessage(SendMessage message) {
         try {
             execute(message);
         } catch (TelegramApiException e) {

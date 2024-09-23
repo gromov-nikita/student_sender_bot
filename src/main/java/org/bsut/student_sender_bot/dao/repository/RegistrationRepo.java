@@ -7,8 +7,10 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Repository
 public interface RegistrationRepo extends JpaRepository<Registration,Integer>, JpaSpecificationExecutor<Registration> {
     Registration findByConsultationAndDate(Consultation consultation, LocalDate localDate);
+    List<Registration> findAllByDate(LocalDate localDate);
 }

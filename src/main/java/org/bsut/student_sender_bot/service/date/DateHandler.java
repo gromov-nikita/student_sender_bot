@@ -13,7 +13,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class DateParser {
+public class DateHandler {
     private static final List<Integer> EVERY_SATURDAY_MONTH_GROUP = List.of(6,9);
     public List<List<LocalDate>> getConsultationDateGroup(Pair<LocalDate,LocalDate> interval) {
         return StreamEx.of(parseIntervalToMonthInterval(interval)).map(this::getSaturdayGroup).toList();
@@ -55,5 +55,8 @@ public class DateParser {
             saturday = saturday.plusWeeks(1);
         }
         return saturdays;
+    }
+    public LocalDate getSaturday() {
+        return LocalDate.now().with(DayOfWeek.SATURDAY);
     }
 }

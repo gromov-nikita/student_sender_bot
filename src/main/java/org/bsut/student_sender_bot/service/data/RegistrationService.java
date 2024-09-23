@@ -37,4 +37,7 @@ public class RegistrationService {
                 )
         );
     }
+    public List<Registration> findAllByDate(LocalDate localDate) {
+        return registrationRepo.findAllByDate(localDate);
+    }
 }
