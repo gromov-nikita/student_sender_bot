@@ -14,4 +14,4 @@ telegram:
     token: 7466690263:AAGOYLoIpwksOKfPZPbEHBQSPmk-RPajN9o
 cron:
   send-student:
-    time-interval: 0 */1 * * * *
+    time-interval: 0 */10 * * * *
