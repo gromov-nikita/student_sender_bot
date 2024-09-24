@@ -44,6 +44,7 @@ public class RegistrationSurvey implements Survey {
     private final DateFormatterCreator dateFormatterCreator;
     private final Splitter splitter;
 
+    private List<LocalDate> registrationDateList;
     private Session session;
     private LocalDate date;
     private String name;
@@ -97,11 +98,11 @@ public class RegistrationSurvey implements Survey {
     }
     private SendMessage getDateMessage(Long chatId) {
         this.session = sessionService.getCurrentSession();
+        List<List<LocalDate>> consultationDateGroup = dateHandler.getConsultationDateGroup(Pair.of(session.getStartDate(), session.getEndDate()));
+        this.registrationDateList = StreamEx.of(consultationDateGroup).flatMap(List::stream).toList();
         return messageCreator.getReplyKeyboardMessage(chatId,
                 "Выберите дату посещения консультации. ",
-                replyKeyboardCreator.generateReplyKeyboard(stringify(
-                        dateHandler.getConsultationDateGroup(Pair.of(session.getStartDate(),session.getEndDate()))
-                ))
+                replyKeyboardCreator.generateReplyKeyboard(stringify(consultationDateGroup))
         );
     }
     private List<List<String>> stringify(List<List<LocalDate>> dateGroup) {
@@ -143,7 +144,8 @@ public class RegistrationSurvey implements Survey {
         );
     }
     private void handleDateMessage(Message message) {
-        this.date = LocalDate.parse(message.getText(),dateFormatterCreator.getUserLocalDateFormatter());
+        LocalDate date = LocalDate.parse(message.getText(), dateFormatterCreator.getUserLocalDateFormatter());
+        if(registrationDateList.contains(date)) this.date = date;
     }
     private void handleNameMessage(Message message) {
         this.name = message.getText();
