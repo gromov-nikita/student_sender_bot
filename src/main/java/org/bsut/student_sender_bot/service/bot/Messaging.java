@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -103,18 +104,29 @@ public class Messaging {
     }
     private SendMessage getRegistrationCancelMenuMessage(Long chatId) {
         List<StudentRecord> recordGroup = studentRecordService.findAllByChatIdAndDateAfter(chatId, LocalDate.now());
-        if(recordGroup.isEmpty()) return messageCreator.getDefaultMessage(chatId,
+        if(recordGroup.isEmpty()) return getCancelWithoutRegistrationMessage(chatId);
+        else return getCancelRegistrationMessage(chatId,recordGroup);
+    }
+    private SendMessage getCancelWithoutRegistrationMessage(Long chatId) {
+        return messageCreator.getDefaultMessage(chatId,
                 "На данный момент у вас отсутствуют запланированные консультации."
         );
-        else return messageCreator.getReplyKeyboardMessage(
+    }
+    private SendMessage getCancelRegistrationMessage(Long chatId,List<StudentRecord> recordGroup) {
+        return messageCreator.getReplyKeyboardMessage(
                 chatId,
                 "Нажмите на консультации, которые хотите отменить.\n\n",
-                inlineKeyboardCreator.generateInlineKeyboard(
-                        splitter.split(StreamEx.of(recordGroup).sortedBy(record -> record.getRegistration().getDate())
-                                .map(record-> new ButtonData(stringifyToInlineButton(record),
-                                        CallbackDataPrefix.REG_CANCEL.getPrefix()+record.getId()
-                                )).toList(), 1
-                        )
+                getCancelRegistrationKeyboard(recordGroup)
+        );
+    }
+    private ReplyKeyboard getCancelRegistrationKeyboard(List<StudentRecord> recordGroup) {
+        return inlineKeyboardCreator.generateInlineKeyboard(
+                splitter.split(StreamEx.of(recordGroup).sortedBy(record -> record.getRegistration().getDate())
+                        .map(record-> new ButtonData(
+                                stringifyToInlineButton(record),
+                                CallbackDataPrefix.REG_CANCEL.getPrefix()+record.getId()
+                        )).toList(),
+                        1
                 )
         );
     }
