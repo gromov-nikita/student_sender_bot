@@ -76,7 +76,22 @@ public class RegistrationSurvey implements Survey {
     }
     @Override
     public SendMessage closeSurvey(Long chatId) {
-        StudentRecord record = studentRecordService.save(StudentRecord.builder()
+        StudentRecord record = studentRecordService.save(createStudentRecord(chatId));
+        return messageCreator.getReplyKeyboardMessage(chatId, stringify(record),
+                replyKeyboardCreator.generateCommandsReplyKeyboard(BotCommandLevel.DEFAULT)
+        );
+    }
+    private String stringify(StudentRecord record) {
+        return "Вы зарегистрированы на " +
+                record.getRegistration().getDate().format(dateFormatterCreator.getUserLocalDateFormatter()) + " число. \nПодходите с " +
+                record.getRegistration().getConsultation().getStartTime() + " до " +
+                record.getRegistration().getConsultation().getEndTime() + "." +
+                "\nК преподавателям:\n" + StreamEx.of(record.getRegistration().getConsultation().getConsultationTeachers())
+                .map(ConsultationTeacher::getTeacher)
+                .map(Teacher::getName).map(name->name + "\n").reduce(String::concat).get();
+    }
+    private StudentRecord createStudentRecord(Long chatId) {
+        return StudentRecord.builder()
                 .chatId(chatId)
                 .name(name)
                 .studentGroup(group)
@@ -84,17 +99,7 @@ public class RegistrationSurvey implements Survey {
                 .type(type)
                 .registration(registrationService.getOrSave(
                         consultationService.findBySessionAndGroupAndSubject(session, group, subject), date)
-                ).build()
-        );
-        return messageCreator.getReplyKeyboardMessage(chatId, "Вы зарегистрированы на " +
-                record.getRegistration().getDate().format(dateFormatterCreator.getUserLocalDateFormatter()) + " число. \nПодходите с " +
-                record.getRegistration().getConsultation().getStartTime() + " до " +
-                record.getRegistration().getConsultation().getEndTime() + "." +
-                "\nК преподавателям:\n" + StreamEx.of(record.getRegistration().getConsultation().getConsultationTeachers())
-                .map(ConsultationTeacher::getTeacher)
-                .map(Teacher::getName).map(name->name + "\n").reduce(String::concat).get(),
-                replyKeyboardCreator.generateCommandsReplyKeyboard(BotCommandLevel.DEFAULT)
-        );
+                ).build();
     }
     private SendMessage getDateMessage(Long chatId) {
         this.session = sessionService.getCurrentSession();
