@@ -1,12 +1,11 @@
 package org.bsut.student_sender_bot.service.bot;
 
 import lombok.RequiredArgsConstructor;
-import org.bsut.student_sender_bot.service.bot.event.SurveyEvent;
+import org.bsut.student_sender_bot.service.bot.event.survey.SurveyEvent;
 import org.bsut.student_sender_bot.service.bot.event.command.*;
 import org.bsut.student_sender_bot.service.bot.survey.SurveyService;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 import static org.bsut.student_sender_bot.service.bot.enums.BotCommand.*;

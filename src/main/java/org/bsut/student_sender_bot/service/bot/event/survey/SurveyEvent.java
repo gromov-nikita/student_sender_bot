@@ -1,4 +1,4 @@
-package org.bsut.student_sender_bot.service.bot.event;
+package org.bsut.student_sender_bot.service.bot.event.survey;
 
 import lombok.Getter;
 import org.springframework.context.ApplicationEvent;

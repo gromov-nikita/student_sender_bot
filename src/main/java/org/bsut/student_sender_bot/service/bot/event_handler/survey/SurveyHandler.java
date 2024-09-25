@@ -2,7 +2,7 @@ package org.bsut.student_sender_bot.service.bot.event_handler.survey;
 
 import lombok.RequiredArgsConstructor;
 import org.bsut.student_sender_bot.service.bot.Bot;
-import org.bsut.student_sender_bot.service.bot.event.SurveyEvent;
+import org.bsut.student_sender_bot.service.bot.event.survey.SurveyEvent;
 import org.bsut.student_sender_bot.service.bot.event.command.StopEvent;
 import org.bsut.student_sender_bot.service.bot.survey.Survey;
 import org.bsut.student_sender_bot.service.bot.survey.SurveyService;
