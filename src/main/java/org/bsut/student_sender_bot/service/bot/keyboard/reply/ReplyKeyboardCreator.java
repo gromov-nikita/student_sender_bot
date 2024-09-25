@@ -2,9 +2,8 @@ package org.bsut.student_sender_bot.service.bot.keyboard.reply;
 
 import lombok.RequiredArgsConstructor;
 import one.util.streamex.StreamEx;
-import org.bsut.student_sender_bot.service.bot.StudentSenderBot;
 import org.bsut.student_sender_bot.service.bot.enums.BotCommandLevel;
-import org.bsut.student_sender_bot.service.bot.enums.StudentSenderBotCommand;
+import org.bsut.student_sender_bot.service.bot.enums.BotCommand;
 import org.bsut.student_sender_bot.service.list_handler.Splitter;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
@@ -13,7 +12,6 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Function;
 
 @Service
 @RequiredArgsConstructor
@@ -41,9 +39,9 @@ public class ReplyKeyboardCreator {
     }
     public ReplyKeyboardMarkup generateCommandsReplyKeyboard(BotCommandLevel botCommandLevel) {
         return getReplyKeyboard(getKeyboardRows(splitter.split(
-                StreamEx.of(StudentSenderBotCommand.values())
+                StreamEx.of(BotCommand.values())
                         .filter(command->command.getLevel().equals(botCommandLevel))
-                        .map(StudentSenderBotCommand::getCommand).toList(),
+                        .map(BotCommand::getCommand).toList(),
                 2
                 )
         ), false);

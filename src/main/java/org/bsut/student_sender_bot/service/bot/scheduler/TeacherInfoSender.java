@@ -7,7 +7,7 @@ import org.bsut.student_sender_bot.entity.Registration;
 import org.bsut.student_sender_bot.entity.StudentRecord;
 import org.bsut.student_sender_bot.entity.Teacher;
 import org.bsut.student_sender_bot.service.bot.SendMessageCreator;
-import org.bsut.student_sender_bot.service.bot.StudentSenderBot;
+import org.bsut.student_sender_bot.service.bot.Bot;
 import org.bsut.student_sender_bot.service.data.RegistrationService;
 import org.bsut.student_sender_bot.service.date.DateFormatterCreator;
 import org.bsut.student_sender_bot.service.date.DateHandler;
@@ -26,7 +26,7 @@ public class TeacherInfoSender {
     private final DateHandler dateHandler;
     private final DateFormatterCreator dateFormatterCreator;
     private final SendMessageCreator sendMessageCreator;
-    private final StudentSenderBot bot;
+    private final Bot bot;
 
     @Scheduled(cron = "${cron.send-student.time-interval}")
     @Transactional

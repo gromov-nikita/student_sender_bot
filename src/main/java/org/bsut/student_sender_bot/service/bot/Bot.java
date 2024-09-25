@@ -12,7 +12,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 @Component
 @RequiredArgsConstructor
-public class StudentSenderBot extends TelegramLongPollingBot {
+public class Bot extends TelegramLongPollingBot {
 
     private final BotConfig botConfig;
     private final Messaging messaging;
@@ -33,7 +33,7 @@ public class StudentSenderBot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         Message message = update.getMessage();
         if(update.hasCallbackQuery()) sendMessage(callbackHandler.getAnswer(update.getCallbackQuery().getData(),update.getCallbackQuery().getMessage().getChatId()));
-        else if(update.hasMessage() && (message.hasText() || message.hasContact()) ) sendMessage(messaging.getAnswer(message));
+        else if(update.hasMessage() && (message.hasText() || message.hasContact()) ) messaging.handle(message);
     }
     public void sendMessage(SendMessage message) {
         try {
