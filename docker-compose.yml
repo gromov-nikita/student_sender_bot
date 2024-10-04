@@ -1,0 +1,41 @@
+version: '3.9'
+services:
+  redis:
+    image: "redis:latest"
+    container_name: redis
+    networks:
+      - data-net
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 5863
+      POSTGRES_DB: student_sender_bot
+    ports:
+      - "5432:5432"
+    networks:
+      - data-net
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/student_sender_bot
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=5863
+      - SPRING_REDIS_HOST=redis
+      - SPRING_REDIS_PORT=6379
+      - TELEGRAM_BOT_TOKEN=7466690263:AAGOYLoIpwksOKfPZPbEHBQSPmk-RPajN9o
+      - TELEGRAM_BOT_USERNAME=student_sender_bot
+    depends_on:
+      - redis
+      - postgres
+    networks:
+      - data-net
+
+networks:
+  data-net:
+    driver: bridge
