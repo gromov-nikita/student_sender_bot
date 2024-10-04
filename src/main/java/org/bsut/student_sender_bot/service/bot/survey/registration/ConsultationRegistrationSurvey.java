@@ -1,5 +1,6 @@
 package org.bsut.student_sender_bot.service.bot.survey.registration;
 
+import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -29,7 +30,7 @@ import java.util.Objects;
 @Setter
 @Getter
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class RegistrationSurvey implements Survey {
+public class ConsultationRegistrationSurvey implements Survey {
 
     private final SessionService sessionService;
     private final StudentGroupService studentGroupService;
@@ -43,42 +44,43 @@ public class RegistrationSurvey implements Survey {
     private final SendMessageCreator messageCreator;
     private final DateFormatterCreator dateFormatterCreator;
     private final Splitter splitter;
+    private final AppUserService appUserService;
 
+    private AppUser appUser;
     private List<LocalDate> registrationDateList;
     private Session session;
     private LocalDate date;
-    private String name;
-    private String phoneNumber;
-    private StudentGroup group;
     private Subject subject;
     private ConsultationType type;
 
+    @PostConstruct
+    private void init() {
+        this.session = sessionService.getCurrentSession();
+    }
 
     @Override
     public SendMessage nextMessage(Long chatId) {
-        if (Objects.isNull(date)) return getDateMessage(chatId);
-        else if(Objects.isNull(name)) return messageCreator.getDefaultMessage(chatId,"Введите ваше Ф.И.О.");
-        else if(Objects.isNull(phoneNumber)) return getPhoneNumberMessage(chatId);
-        else if(Objects.isNull(group)) return getStudentGroupMessage(chatId);
-        else if(Objects.isNull(subject)) return getSubjectMessage(chatId);
+        if(Objects.isNull(appUser)) appUser = appUserService.getByChatId(chatId);
+        if(Objects.isNull(subject)) return getSubjectMessage(chatId);
+        else if (Objects.isNull(date)) return getDateMessage(chatId);
         else if(Objects.isNull(type)) return getTypeMessage(chatId);
         else return null;
     }
 
     @Override
     public void handleAnswer(Message message) {
+        if(Objects.isNull(subject)) handleSubjectNameMessage(message);
         if (Objects.isNull(date)) handleDateMessage(message);
-        else if(Objects.isNull(name)) handleNameMessage(message);
-        else if(Objects.isNull(phoneNumber)) handlePhoneNumberMessage(message);
-        else if(Objects.isNull(group)) handleGroupNameMessage(message);
-        else if(Objects.isNull(subject)) handleSubjectNameMessage(message);
         else if(Objects.isNull(type)) handleTypeNameMessage(message);
     }
     @Override
     public SendMessage closeSurvey(Long chatId) {
-        StudentRecord record = studentRecordService.save(createStudentRecord(chatId));
+        StudentRecord record = studentRecordService.save(createStudentRecord());
         return messageCreator.getReplyKeyboardMessage(chatId, stringify(record),
-                replyKeyboardCreator.generateCommandsReplyKeyboard(BotCommandLevel.DEFAULT)
+                replyKeyboardCreator.generateCommandsReplyKeyboard(
+                        BotCommandLevel.DEFAULT,
+                        appUserService.getByChatId(chatId).getType()
+                )
         );
     }
     private String stringify(StudentRecord record) {
@@ -87,22 +89,16 @@ public class RegistrationSurvey implements Survey {
                 record.getRegistration().getConsultation().getStartTime() + " до " +
                 record.getRegistration().getConsultation().getEndTime() + "." +
                 "\nК преподавателям:\n" + StreamEx.of(record.getRegistration().getConsultation().getConsultationTeachers())
-                .map(ConsultationTeacher::getTeacher)
-                .map(Teacher::getName).map(name->name + "\n").reduce(String::concat).get();
+                .map(ConsultationTeacher::getAppUser)
+                .map(AppUser::getName).map(name->name + "\n").reduce(String::concat).get();
     }
-    private StudentRecord createStudentRecord(Long chatId) {
-        return StudentRecord.builder()
-                .chatId(chatId)
-                .name(name)
-                .studentGroup(group)
-                .phoneNumber(phoneNumber)
-                .type(type)
-                .registration(registrationService.getOrSave(
-                        consultationService.findBySessionAndGroupAndSubject(session, group, subject), date)
-                ).build();
+    private StudentRecord createStudentRecord() {
+        return StudentRecord.builder().appUser(appUser).type(type).registration(registrationService.getOrSave(
+                consultationService.findBySessionAndGroupAndSubject(session, appUser.getStudentGroup(), subject),
+                date
+        )).build();
     }
     private SendMessage getDateMessage(Long chatId) {
-        this.session = sessionService.getCurrentSession();
         List<List<LocalDate>> consultationDateGroup = dateHandler.getConsultationDateGroup(Pair.of(session.getStartDate(), session.getEndDate()));
         this.registrationDateList = StreamEx.of(consultationDateGroup).flatMap(List::stream).toList();
         return messageCreator.getReplyKeyboardMessage(chatId,
@@ -115,28 +111,14 @@ public class RegistrationSurvey implements Survey {
                 StreamEx.of(row).map(date -> date.format(dateFormatterCreator.getUserLocalDateFormatter())).toList()
         ).toList();
     }
-    private SendMessage getStudentGroupMessage(Long chatId) {
-        return messageCreator.getReplyKeyboardMessage(chatId,
-                "Выберите вашу группу. Если вашей группы нет в списке, значит у группы нет доступных консультаций.",
-                replyKeyboardCreator.generateReplyKeyboard(splitter.split(StreamEx.of(
-                        studentGroupService.getStudentGroupsWithConsultationsInSession(session)
-                ).map(StudentGroup::getName).sorted().toList(),2))
-        );
-    }
     private SendMessage getSubjectMessage(Long chatId) {
         return messageCreator.getReplyKeyboardMessage(chatId,
                 "Выберите предмет. ",
                 replyKeyboardCreator.generateReplyKeyboard(splitter.split(
-                        StreamEx.of(consultationService.findBySessionAndGroup(session,group))
+                        StreamEx.of(consultationService.findBySessionAndGroup(session, appUser.getStudentGroup()))
                                 .map(Consultation::getSubject).map(Subject::getName).sorted().toList(),
                         1
                 ))
-        );
-    }
-    private SendMessage getPhoneNumberMessage(Long chatId) {
-        return messageCreator.getReplyKeyboardMessage(chatId,
-                "Поделитесь номером телефона. ",
-                replyKeyboardCreator.generatePhoneNumberReplyKeyboard()
         );
     }
     private SendMessage getTypeMessage(Long chatId) {
@@ -152,30 +134,10 @@ public class RegistrationSurvey implements Survey {
         LocalDate date = LocalDate.parse(message.getText(), dateFormatterCreator.getUserLocalDateFormatter());
         if(registrationDateList.contains(date)) this.date = date;
     }
-    private void handleNameMessage(Message message) {
-        this.name = message.getText();
-    }
-    private void handlePhoneNumberMessage(Message message) {
-        this.phoneNumber = message.hasText() ? message.getText() : message.getContact().getPhoneNumber();
-    }
-    private void handleGroupNameMessage(Message message) {
-        this.group = studentGroupService.findByName(message.getText());
-    }
     private void handleSubjectNameMessage(Message message) {
         this.subject = subjectService.findByName(message.getText());
     }
     private void handleTypeNameMessage(Message message) {
         this.type = consultationTypeService.findByName(message.getText());
-    }
-    @Override
-    public String toString() {
-        return "consultationSurveyState : {" +
-                " \ndate: " + date +
-                ", \nname: \"" + name + "\"" +
-                ", \nphoneNumber: \"" + phoneNumber + "\"" +
-                ", \ngroupName: \"" + group.getName() + "\"" +
-                ", \nsubjectName: \"" + subject.getName() + "\"" +
-                ", \ntypeName: \"" + type.getName() + "\"" +
-                "\n}";
     }
 }

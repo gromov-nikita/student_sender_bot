@@ -23,6 +23,6 @@ public class ConsultationTeacher {
     private Consultation consultation;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "teacher_id", nullable = false)
-    private Teacher teacher;
+    @JoinColumn(name = "user_id", nullable = false)
+    private AppUser appUser;
 }

@@ -6,9 +6,16 @@ import org.bsut.student_sender_bot.service.bot.SendMessageCreator;
 import org.bsut.student_sender_bot.service.bot.enums.BotCommandLevel;
 import org.bsut.student_sender_bot.service.bot.event.command.StartEvent;
 import org.bsut.student_sender_bot.service.bot.keyboard.reply.ReplyKeyboardCreator;
+import org.bsut.student_sender_bot.service.bot.survey.SurveyService;
+import org.bsut.student_sender_bot.service.bot.survey.registration.AppRegistrationSurvey;
+import org.bsut.student_sender_bot.service.bot.survey.registration.ConsultationRegistrationSurvey;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+
+import java.util.Objects;
 
 import static org.bsut.student_sender_bot.service.bot.enums.BotCommand.getAllCommandInfo;
 
@@ -19,15 +26,18 @@ public class StartHandler {
     private final Bot bot;
     private final SendMessageCreator messageCreator;
     private final ReplyKeyboardCreator replyKeyboardCreator;
+    private final ApplicationContext appContext;
+    private final SurveyService surveyService;
 
     @Async
     @EventListener
     public void handle(StartEvent event) {
-        bot.sendMessage(messageCreator.getReplyKeyboardMessage(
-                event.getMessage().getChatId(),
-                "Привет, " + event.getMessage().getChat().getFirstName() +
-                        ", вот список всех доступных команд: \n" + getAllCommandInfo(),
-                replyKeyboardCreator.generateCommandsReplyKeyboard(BotCommandLevel.DEFAULT)
-        ));
+        Long chatId = event.getMessage().getChatId();
+        surveyService.startSurvey(chatId,appContext.getBean(AppRegistrationSurvey.class));
+        handleSendMessage(surveyService.getSurveyState(chatId).nextMessage(chatId), chatId);
+    }
+    private void handleSendMessage(SendMessage sendMessage, Long chatId) {
+        if(Objects.isNull(sendMessage)) bot.sendMessage(surveyService.removeSurvey(chatId).closeSurvey(chatId));
+        else bot.sendMessage(sendMessage);
     }
 }

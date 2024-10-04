@@ -16,9 +16,6 @@ public class StudentRecord {
     @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-    private String name;
-    private String phoneNumber;
-    private long chatId;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "consultation_type_id")
     private ConsultationType type;
@@ -28,4 +25,7 @@ public class StudentRecord {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "student_group_id")
     private StudentGroup studentGroup;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false, name = "user_id")
+    private AppUser appUser;
 }

@@ -1,9 +1,6 @@
 package org.bsut.student_sender_bot.dao.specification;
 
-import org.bsut.student_sender_bot.entity.Registration;
-import org.bsut.student_sender_bot.entity.Registration_;
-import org.bsut.student_sender_bot.entity.StudentRecord;
-import org.bsut.student_sender_bot.entity.StudentRecord_;
+import org.bsut.student_sender_bot.entity.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -11,12 +8,7 @@ import java.time.LocalDate;
 
 @Service
 public class StudentRecordSpec {
-    public Specification<StudentRecord> getPhoneNumber(String phoneNumber) {
-        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(
-                root.get(StudentRecord_.phoneNumber),
-                phoneNumber
-        );
-    }
+
     public Specification<StudentRecord> getId(long id) {
         return (root, query, criteriaBuilder) -> criteriaBuilder.equal(
                 root.get(StudentRecord_.id),
@@ -31,7 +23,7 @@ public class StudentRecordSpec {
     }
     public Specification<StudentRecord> getChatId(long chatId) {
         return (root, query, criteriaBuilder) -> criteriaBuilder.equal(
-                root.get(StudentRecord_.chatId),
+                root.join(StudentRecord_.appUser).get(AppUser_.chatId),
                 chatId
         );
     }

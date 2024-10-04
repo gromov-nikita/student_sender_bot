@@ -2,6 +2,7 @@ package org.bsut.student_sender_bot.service.bot.keyboard.reply;
 
 import lombok.RequiredArgsConstructor;
 import one.util.streamex.StreamEx;
+import org.bsut.student_sender_bot.entity.enums.UserType;
 import org.bsut.student_sender_bot.service.bot.enums.BotCommandLevel;
 import org.bsut.student_sender_bot.service.bot.enums.BotCommand;
 import org.bsut.student_sender_bot.service.list_handler.Splitter;
@@ -37,10 +38,11 @@ public class ReplyKeyboardCreator {
                 List.of(KeyboardButton.builder().text("Отправить номер телефона").requestContact(true).build())
         )),true);
     }
-    public ReplyKeyboardMarkup generateCommandsReplyKeyboard(BotCommandLevel botCommandLevel) {
+    public ReplyKeyboardMarkup generateCommandsReplyKeyboard(BotCommandLevel botCommandLevel, UserType userType) {
         return getReplyKeyboard(getKeyboardRows(splitter.split(
                 StreamEx.of(BotCommand.values())
-                        .filter(command->command.getLevel().equals(botCommandLevel))
+                        .filter(command->command.getLevel().equals(botCommandLevel)
+                                && command.getUserTypeGroup().contains(userType))
                         .map(BotCommand::getCommand).toList(),
                 2
                 )

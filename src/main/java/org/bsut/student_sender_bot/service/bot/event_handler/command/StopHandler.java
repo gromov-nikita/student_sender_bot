@@ -3,8 +3,10 @@ package org.bsut.student_sender_bot.service.bot.event_handler.command;
 import lombok.RequiredArgsConstructor;
 import org.bsut.student_sender_bot.service.bot.Bot;
 import org.bsut.student_sender_bot.service.bot.SendMessageCreator;
+import org.bsut.student_sender_bot.service.bot.event.command.StartEvent;
 import org.bsut.student_sender_bot.service.bot.event.command.StopEvent;
 import org.bsut.student_sender_bot.service.bot.survey.SurveyService;
+import org.bsut.student_sender_bot.service.bot.survey.registration.AppRegistrationSurvey;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,7 @@ public class StopHandler {
     @EventListener
     public void handle(StopEvent event) {
         Long chatId = event.getMessage().getChatId();
+        if(surveyService.getSurveyState(chatId) instanceof AppRegistrationSurvey) return;
         surveyService.removeSurvey(chatId);
         bot.sendMessage(messageCreator.getDefaultMessage(
                 chatId,

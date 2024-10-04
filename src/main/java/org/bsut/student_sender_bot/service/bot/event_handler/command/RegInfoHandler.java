@@ -2,9 +2,9 @@ package org.bsut.student_sender_bot.service.bot.event_handler.command;
 
 import lombok.RequiredArgsConstructor;
 import one.util.streamex.StreamEx;
+import org.bsut.student_sender_bot.entity.AppUser;
 import org.bsut.student_sender_bot.entity.ConsultationTeacher;
 import org.bsut.student_sender_bot.entity.StudentRecord;
-import org.bsut.student_sender_bot.entity.Teacher;
 import org.bsut.student_sender_bot.service.bot.Bot;
 import org.bsut.student_sender_bot.service.bot.SendMessageCreator;
 import org.bsut.student_sender_bot.service.bot.event.command.RegInfoEvent;
@@ -49,7 +49,7 @@ public class RegInfoHandler {
                 " до " + studentRecord.getRegistration().getConsultation().getEndTime() + ".\n" +
                 "Предмет: " + studentRecord.getRegistration().getConsultation().getSubject().getName() + ".\n" +
                 "Преподаватели:\n" + StreamEx.of(studentRecord.getRegistration().getConsultation().getConsultationTeachers())
-                .map(ConsultationTeacher::getTeacher)
-                .map(Teacher::getName).map(name->name + "\n").reduce(String::concat).get();
+                .map(ConsultationTeacher::getAppUser)
+                .map(AppUser::getName).map(name->name + "\n").reduce(String::concat).get();
     }
 }

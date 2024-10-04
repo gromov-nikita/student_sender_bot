@@ -29,6 +29,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
     implementation("org.telegram:telegrambots-spring-boot-starter:6.8.0")
+    implementation("com.fasterxml.jackson.core:jackson-databind")
     implementation("org.postgresql:postgresql:42.7.4")
     implementation("redis.clients:jedis")
     implementation("org.apache.poi:poi:5.3.0")

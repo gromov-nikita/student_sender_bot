@@ -31,17 +31,6 @@ public class RegistrationService {
     public Registration findByConsultationAndDate(Consultation consultation, LocalDate date) {
         return registrationRepo.findByConsultationAndDate(consultation, date);
     }
-    public List<Registration> findAllByChatIdAndDateAfter(long chatId, LocalDate localDate) {
-        return registrationRepo.findAll(
-                Specification.allOf(
-                        registrationSpec.getChatId(chatId),
-                        registrationSpec.getDateAfterOrEqually(localDate)
-                )
-        );
-    }
-    public List<Registration> findAllByDate(LocalDate localDate) {
-        return registrationRepo.findAllByDate(localDate);
-    }
     public List<Registration> findAllWithStudentRecordsAndDate(LocalDate localDate) {
         return registrationCriteriaApi.getWithStudentRecordsAndSpec(registrationSpec.getDate(localDate));
     }

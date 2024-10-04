@@ -2,10 +2,10 @@ package org.bsut.student_sender_bot.service.bot.scheduler;
 
 import lombok.RequiredArgsConstructor;
 import one.util.streamex.StreamEx;
+import org.bsut.student_sender_bot.entity.AppUser;
 import org.bsut.student_sender_bot.entity.ConsultationTeacher;
 import org.bsut.student_sender_bot.entity.Registration;
 import org.bsut.student_sender_bot.entity.StudentRecord;
-import org.bsut.student_sender_bot.entity.Teacher;
 import org.bsut.student_sender_bot.service.bot.SendMessageCreator;
 import org.bsut.student_sender_bot.service.bot.Bot;
 import org.bsut.student_sender_bot.service.data.RegistrationService;
@@ -33,8 +33,8 @@ public class TeacherInfoSender {
     public void sendStudentList() {
         StreamEx.of(registrationService.findAllWithStudentRecordsAndDate(dateHandler.getSaturday())).mapToEntry(
                 registration-> StreamEx.of(registration.getConsultation().getConsultationTeachers())
-                        .map(ConsultationTeacher::getTeacher)
-                        .map(Teacher::getChatId).toList(),
+                        .map(ConsultationTeacher::getAppUser)
+                        .map(AppUser::getChatId).toList(),
                 this::stringify
         ).forEach(this::notice);
     }
@@ -47,9 +47,9 @@ public class TeacherInfoSender {
                         .map(this::stringify).map(str->str+"\n\n").reduce(String::concat).get();
     }
     private String stringify(StudentRecord studentRecord) {
-        return studentRecord.getName() + "\n" +
-                studentRecord.getStudentGroup().getName() + "\n" +
-                studentRecord.getPhoneNumber();
+        return studentRecord.getAppUser().getName() + "\n" +
+                studentRecord.getAppUser().getStudentGroup().getName() + "\n" +
+                studentRecord.getAppUser().getPhoneNumber();
     }
     private void notice(Map.Entry<List<Long>,String> reg) {
         StreamEx.of(reg.getKey()).map(
