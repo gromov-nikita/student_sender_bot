@@ -3,12 +3,16 @@ package org.bsut.student_sender_bot.service.bot.event_handler.command;
 import lombok.RequiredArgsConstructor;
 import one.util.streamex.StreamEx;
 import org.bsut.student_sender_bot.entity.StudentRecord;
+import org.bsut.student_sender_bot.entity.enums.UserType;
 import org.bsut.student_sender_bot.service.bot.Bot;
 import org.bsut.student_sender_bot.service.bot.SendMessageCreator;
+import org.bsut.student_sender_bot.service.bot.enums.BotCommandLevel;
 import org.bsut.student_sender_bot.service.bot.enums.CallbackDataPrefix;
 import org.bsut.student_sender_bot.service.bot.event.command.RegCancelEvent;
 import org.bsut.student_sender_bot.service.bot.keyboard.inline.ButtonData;
 import org.bsut.student_sender_bot.service.bot.keyboard.inline.InlineKeyboardCreator;
+import org.bsut.student_sender_bot.service.bot.keyboard.reply.ReplyKeyboardCreator;
+import org.bsut.student_sender_bot.service.data.AppUserService;
 import org.bsut.student_sender_bot.service.data.StudentRecordService;
 import org.bsut.student_sender_bot.service.date.DateFormatterCreator;
 import org.bsut.student_sender_bot.service.list_handler.Splitter;
@@ -27,9 +31,11 @@ public class RegCancelHandler {
 
     private final Bot bot;
     private final InlineKeyboardCreator inlineKeyboardCreator;
+    private final ReplyKeyboardCreator replyKeyboardCreator;
     private final DateFormatterCreator dateFormatterCreator;
     private final StudentRecordService studentRecordService;
     private final SendMessageCreator messageCreator;
+    private final AppUserService appUserService;
     private final Splitter splitter;
 
     @Async
@@ -37,13 +43,15 @@ public class RegCancelHandler {
     @Transactional
     public void handle(RegCancelEvent event) {
         Long chatId = event.getMessage().getChatId();
-        List<StudentRecord> recordGroup = studentRecordService.findAllByChatIdAndDateAfter(chatId, LocalDate.now());
+        List<StudentRecord> recordGroup = studentRecordService.findAllByChatIdAndDateAfterOrEqually(chatId, LocalDate.now());
         if(recordGroup.isEmpty()) bot.sendMessage(getCancelWithoutRegistrationMessage(chatId));
         else bot.sendMessage(getCancelRegistrationMessage(chatId,recordGroup));
     }
     private SendMessage getCancelWithoutRegistrationMessage(Long chatId) {
-        return messageCreator.getDefaultMessage(chatId,
-                "На данный момент у вас отсутствуют запланированные консультации."
+        UserType userType = appUserService.getByChatId(chatId).getType();
+        return messageCreator.getReplyKeyboardMessage(chatId,
+                "На данный момент у вас отсутствуют запланированные консультации.",
+                replyKeyboardCreator.generateCommandsReplyKeyboard(BotCommandLevel.DEFAULT, userType)
         );
     }
     private SendMessage getCancelRegistrationMessage(Long chatId,List<StudentRecord> recordGroup) {

@@ -14,6 +14,7 @@ import org.bsut.student_sender_bot.service.date.DateFormatterCreator;
 import org.bsut.student_sender_bot.service.date.DateHandler;
 import org.bsut.student_sender_bot.service.data.*;
 import org.bsut.student_sender_bot.service.list_handler.Splitter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.data.util.Pair;
@@ -47,8 +48,12 @@ public class ConsultationRegistrationSurvey implements Survey {
     private final Splitter splitter;
     private final AppUserService appUserService;
 
+    @Value(value = "${const.student.reg.limit}")
+    private int REG_LIMIT;
+
     private AppUser appUser;
     private boolean hasConsultations;
+    private boolean hasReachedConsultationLimit;
     private List<LocalDate> registrationDateList;
     private Session session;
     private LocalDate date;
@@ -65,6 +70,7 @@ public class ConsultationRegistrationSurvey implements Survey {
     public SendMessage nextMessage(Long chatId) {
         if(Objects.isNull(appUser)) appUser = appUserService.getByChatId(chatId);
         if(Objects.isNull(subject)) return getSubjectMessage(chatId);
+        else if(hasReachedConsultationLimit) return null;
         else if (Objects.isNull(date)) return getDateMessage(chatId);
         else if(Objects.isNull(type)) return getTypeMessage(chatId);
         else return null;
@@ -80,8 +86,9 @@ public class ConsultationRegistrationSurvey implements Survey {
     @Override
     @Transactional
     public SendMessage closeSurvey(Long chatId) {
-        if (hasConsultations) return closeWithConsultations(chatId);
-        else return closeWithoutConsultations(chatId);
+        if (!hasConsultations) return closeWithoutConsultations(chatId);
+        else if (hasReachedConsultationLimit) return closeHasReachedConsultationLimit(chatId);
+        else return closeWithConsultations(chatId);
     }
     private SendMessage closeWithConsultations(Long chatId) {
         StudentRecord record = studentRecordService.save(createStudentRecord());
@@ -91,6 +98,12 @@ public class ConsultationRegistrationSurvey implements Survey {
     }
     private SendMessage closeWithoutConsultations(Long chatId) {
         return messageCreator.getReplyKeyboardMessage(chatId, "На данный момент для вас нет доступных консультаций.",
+                replyKeyboardCreator.generateCommandsReplyKeyboard(BotCommandLevel.DEFAULT, appUser.getType())
+        );
+    }
+    private SendMessage closeHasReachedConsultationLimit(Long chatId) {
+        return messageCreator.getReplyKeyboardMessage(chatId,
+                "Предел записей на один предмет: " + REG_LIMIT + ".",
                 replyKeyboardCreator.generateCommandsReplyKeyboard(BotCommandLevel.DEFAULT, appUser.getType())
         );
     }
@@ -152,6 +165,12 @@ public class ConsultationRegistrationSurvey implements Survey {
     }
     private void handleSubjectNameMessage(Message message) {
         this.subject = subjectService.findByName(message.getText());
+        updateReachedConsultationLimit();
+    }
+    private void updateReachedConsultationLimit() {
+        this.hasReachedConsultationLimit = studentRecordService.findAllByUserAndDateAfterOrEquallyAndSubject(
+                appUser, LocalDate.now(), subject
+        ).size() >= REG_LIMIT;
     }
     private void handleTypeNameMessage(Message message) {
         this.type = consultationTypeService.findByName(message.getText());

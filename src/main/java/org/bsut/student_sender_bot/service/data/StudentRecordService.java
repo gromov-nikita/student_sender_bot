@@ -3,7 +3,9 @@ package org.bsut.student_sender_bot.service.data;
 import lombok.RequiredArgsConstructor;
 import org.bsut.student_sender_bot.dao.repository.StudentRecordRepo;
 import org.bsut.student_sender_bot.dao.specification.StudentRecordSpec;
+import org.bsut.student_sender_bot.entity.AppUser;
 import org.bsut.student_sender_bot.entity.StudentRecord;
+import org.bsut.student_sender_bot.entity.Subject;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -18,13 +20,17 @@ public class StudentRecordService {
     public StudentRecord save(StudentRecord studentRecord) {
         return studentRecordRepo.save(studentRecord);
     }
-    public List<StudentRecord> findAllByChatIdAndDateAfter(long chatId, LocalDate localDate) {
-        return studentRecordRepo.findAll(
-                Specification.allOf(
-                        studentRecordSpec.getChatId(chatId),
-                        studentRecordSpec.getDateAfterOrEqually(localDate)
-                )
-        );
+    public List<StudentRecord> findAllByChatIdAndDateAfterOrEqually(long chatId, LocalDate localDate) {
+        return studentRecordRepo.findAll(Specification.allOf(
+                studentRecordSpec.getChatId(chatId),
+                studentRecordSpec.getDateAfterOrEqually(localDate)
+        ));
+    }
+    public List<StudentRecord> findAllByUserAndDateAfterOrEquallyAndSubject(AppUser appUser, LocalDate localDate, Subject subject) {
+        return studentRecordRepo.findAll(Specification.allOf(
+                studentRecordSpec.getUser(appUser),
+                studentRecordSpec.getDateAfterOrEquallyAndSubject(localDate,subject)
+        ));
     }
     public long delete(long chatId, long id) {
         return studentRecordRepo.delete(
