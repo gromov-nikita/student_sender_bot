@@ -21,4 +21,6 @@ public class StudentGroup {
     private String name;
     @OneToMany(mappedBy = "studentGroup", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<ConsultationStudentGroup> consultationStudentGroups;
+    @OneToMany(mappedBy = "studentGroup", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<AppUser> appUsers;
 }

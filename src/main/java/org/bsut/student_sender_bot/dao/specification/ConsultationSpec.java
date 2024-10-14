@@ -17,4 +17,15 @@ public class ConsultationSpec {
     public Specification<Consultation> getBySubject(Subject subject) {
         return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(Consultation_.subject),subject);
     }
+
+    public Specification<Consultation> getByUser(AppUser appUser) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.isMember(appUser,
+                root
+                        .join(Consultation_.consultationStudentGroups)
+                        .join(ConsultationStudentGroup_.studentGroup)
+                        .get(StudentGroup_.appUsers)
+        );
+    }
+
+
 }

@@ -43,7 +43,7 @@ public class TeacherInfoSender {
                 "c " + registration.getConsultation().getStartTime() + " до " + registration.getConsultation().getEndTime()
                 + " к вам записаны на консультацию по предмету " + registration.getConsultation().getSubject().getName() + " студенты: " + "\n\n" +
                 StreamEx.of(registration.getStudentRecords())
-                        .sortedBy(record->record.getStudentGroup().getName())
+                        .sortedBy(record->record.getAppUser().getStudentGroup().getName())
                         .map(this::stringify).map(str->str+"\n\n").reduce(String::concat).get();
     }
     private String stringify(StudentRecord studentRecord) {

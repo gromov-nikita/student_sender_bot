@@ -15,31 +15,31 @@ import static org.bsut.student_sender_bot.service.bot.enums.BotCommandLevel.*;
 public enum BotCommand {
     COMMANDS(
             "/commands",
-            "Команда, отвечающая за вывод списка всех команд с их описанием.",
+            "Список всех доступных команд.",
             DEFAULT,
             List.of(UserType.values())
     ),
     REG(
             "/reg",
-            "Команда, отвечающая за регистрацию на консультацию. После ее ввода начнется опрос.",
+            "Регистрация на консультацию.",
             DEFAULT,
             List.of(UserType.STUDENT)
     ),
     REG_INFO(
             "/regInfo",
-            "Команда, отвечающая за предоставление информации о предстоящих консультациях, на которые вы записаны.",
+            "Информации о предстоящих консультациях.",
             DEFAULT,
             List.of(UserType.STUDENT)
     ),
     REG_CANCEL(
             "/regCancel",
-            "Команда, отвечающая за отображение меню отмены консультаций.",
+            "Отмена консультаций.",
             DEFAULT,
             List.of(UserType.STUDENT)
     ),
     STOP(
             "/stop",
-            "Команда, отвечающая за прекращение опроса.",
+            "Прекращение опроса.",
             SURVEY,
             List.of(UserType.values())
     );

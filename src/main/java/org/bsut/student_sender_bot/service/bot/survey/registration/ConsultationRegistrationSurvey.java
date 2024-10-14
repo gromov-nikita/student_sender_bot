@@ -18,6 +18,7 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
@@ -59,6 +60,7 @@ public class ConsultationRegistrationSurvey implements Survey {
     }
 
     @Override
+    @Transactional
     public SendMessage nextMessage(Long chatId) {
         if(Objects.isNull(appUser)) appUser = appUserService.getByChatId(chatId);
         if(Objects.isNull(subject)) return getSubjectMessage(chatId);
@@ -68,12 +70,14 @@ public class ConsultationRegistrationSurvey implements Survey {
     }
 
     @Override
+    @Transactional
     public void handleAnswer(Message message) {
         if(Objects.isNull(subject)) handleSubjectNameMessage(message);
-        if (Objects.isNull(date)) handleDateMessage(message);
+        else if (Objects.isNull(date)) handleDateMessage(message);
         else if(Objects.isNull(type)) handleTypeNameMessage(message);
     }
     @Override
+    @Transactional
     public SendMessage closeSurvey(Long chatId) {
         StudentRecord record = studentRecordService.save(createStudentRecord());
         return messageCreator.getReplyKeyboardMessage(chatId, stringify(record),
@@ -94,7 +98,7 @@ public class ConsultationRegistrationSurvey implements Survey {
     }
     private StudentRecord createStudentRecord() {
         return StudentRecord.builder().appUser(appUser).type(type).registration(registrationService.getOrSave(
-                consultationService.findBySessionAndGroupAndSubject(session, appUser.getStudentGroup(), subject),
+                consultationService.findBySessionAndUserAndSubject(session, appUser, subject),
                 date
         )).build();
     }
@@ -112,13 +116,17 @@ public class ConsultationRegistrationSurvey implements Survey {
         ).toList();
     }
     private SendMessage getSubjectMessage(Long chatId) {
-        return messageCreator.getReplyKeyboardMessage(chatId,
-                "Выберите предмет. ",
-                replyKeyboardCreator.generateReplyKeyboard(splitter.split(
-                        StreamEx.of(consultationService.findBySessionAndGroup(session, appUser.getStudentGroup()))
-                                .map(Consultation::getSubject).map(Subject::getName).sorted().toList(),
-                        1
-                ))
+        List<Consultation> consultations = consultationService.findBySessionAndUser(session, appUser);
+        return consultations.isEmpty() ?
+                messageCreator.getDefaultMessage(chatId, "На данный момент для вас нет доступных консультаций.")
+                :
+                messageCreator.getReplyKeyboardMessage(chatId,
+                        "Выберите предмет. ",
+                        replyKeyboardCreator.generateReplyKeyboard(splitter.split(
+                                StreamEx.of(consultations)
+                                        .map(Consultation::getSubject).map(Subject::getName).sorted().toList(),
+                                1
+                        ))
         );
     }
     private SendMessage getTypeMessage(Long chatId) {

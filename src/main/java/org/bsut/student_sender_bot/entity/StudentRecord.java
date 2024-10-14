@@ -23,9 +23,6 @@ public class StudentRecord {
     @JoinColumn(nullable = false, name = "registration_id")
     private Registration registration;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false, name = "student_group_id")
-    private StudentGroup studentGroup;
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "user_id")
     private AppUser appUser;
 }
