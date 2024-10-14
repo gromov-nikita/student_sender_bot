@@ -48,6 +48,7 @@ public class ConsultationRegistrationSurvey implements Survey {
     private final AppUserService appUserService;
 
     private AppUser appUser;
+    private boolean hasConsultations;
     private List<LocalDate> registrationDateList;
     private Session session;
     private LocalDate date;
@@ -79,12 +80,18 @@ public class ConsultationRegistrationSurvey implements Survey {
     @Override
     @Transactional
     public SendMessage closeSurvey(Long chatId) {
+        if (hasConsultations) return closeWithConsultations(chatId);
+        else return closeWithoutConsultations(chatId);
+    }
+    private SendMessage closeWithConsultations(Long chatId) {
         StudentRecord record = studentRecordService.save(createStudentRecord());
         return messageCreator.getReplyKeyboardMessage(chatId, stringify(record),
-                replyKeyboardCreator.generateCommandsReplyKeyboard(
-                        BotCommandLevel.DEFAULT,
-                        appUserService.getByChatId(chatId).getType()
-                )
+                replyKeyboardCreator.generateCommandsReplyKeyboard(BotCommandLevel.DEFAULT, appUser.getType())
+        );
+    }
+    private SendMessage closeWithoutConsultations(Long chatId) {
+        return messageCreator.getReplyKeyboardMessage(chatId, "На данный момент для вас нет доступных консультаций.",
+                replyKeyboardCreator.generateCommandsReplyKeyboard(BotCommandLevel.DEFAULT, appUser.getType())
         );
     }
     private String stringify(StudentRecord record) {
@@ -117,16 +124,17 @@ public class ConsultationRegistrationSurvey implements Survey {
     }
     private SendMessage getSubjectMessage(Long chatId) {
         List<Consultation> consultations = consultationService.findBySessionAndUser(session, appUser);
-        return consultations.isEmpty() ?
-                messageCreator.getDefaultMessage(chatId, "На данный момент для вас нет доступных консультаций.")
-                :
-                messageCreator.getReplyKeyboardMessage(chatId,
-                        "Выберите предмет. ",
-                        replyKeyboardCreator.generateReplyKeyboard(splitter.split(
-                                StreamEx.of(consultations)
-                                        .map(Consultation::getSubject).map(Subject::getName).sorted().toList(),
-                                1
-                        ))
+        this.hasConsultations = !consultations.isEmpty();
+        return hasConsultations ? handleWithConsultationCase(chatId,consultations) : null;
+    }
+    private SendMessage handleWithConsultationCase(Long chatId,List<Consultation> consultations) {
+        return messageCreator.getReplyKeyboardMessage(chatId,
+                "Выберите предмет. ",
+                replyKeyboardCreator.generateReplyKeyboard(splitter.split(
+                        StreamEx.of(consultations)
+                                .map(Consultation::getSubject).map(Subject::getName).sorted().toList(),
+                        1
+                ))
         );
     }
     private SendMessage getTypeMessage(Long chatId) {
