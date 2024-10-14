@@ -70,6 +70,11 @@ public enum BotCommand {
                 .reduce(String::concat)
                 .orElseThrow();
     }
+    public static List<String> getCommand(UserType userType,BotCommandLevel level) {
+        return StreamEx.of(BotCommand.values())
+                .filter(command->command.getLevel().equals(level) && command.getUserTypeGroup().contains(userType))
+                .map(BotCommand::getCommand).toList();
+    }
     public String getInfo() {
         return command + " - " + commandDescription + " " + level.getInfo();
     }

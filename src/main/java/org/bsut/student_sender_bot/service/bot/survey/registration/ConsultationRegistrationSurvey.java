@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import one.util.streamex.StreamEx;
 import org.bsut.student_sender_bot.entity.*;
+import org.bsut.student_sender_bot.service.bot.enums.BotCommand;
 import org.bsut.student_sender_bot.service.bot.enums.BotCommandLevel;
 import org.bsut.student_sender_bot.service.bot.keyboard.reply.ReplyKeyboardCreator;
 import org.bsut.student_sender_bot.service.bot.SendMessageCreator;
@@ -125,9 +126,11 @@ public class ConsultationRegistrationSurvey implements Survey {
     private SendMessage getDateMessage(Long chatId) {
         List<List<LocalDate>> consultationDateGroup = dateHandler.getConsultationDateGroup(Pair.of(session.getStartDate(), session.getEndDate()));
         this.registrationDateList = StreamEx.of(consultationDateGroup).flatMap(List::stream).toList();
+        List<List<String>> keyBoardMenu = stringify(consultationDateGroup);
+        keyBoardMenu.addLast(BotCommand.getCommand(appUser.getType(),BotCommandLevel.SURVEY));
         return messageCreator.getReplyKeyboardMessage(chatId,
                 "Выберите дату посещения консультации. ",
-                replyKeyboardCreator.generateReplyKeyboard(stringify(consultationDateGroup))
+                replyKeyboardCreator.generateReplyKeyboard(keyBoardMenu)
         );
     }
     private List<List<String>> stringify(List<List<LocalDate>> dateGroup) {
@@ -145,7 +148,8 @@ public class ConsultationRegistrationSurvey implements Survey {
                 "Выберите предмет. ",
                 replyKeyboardCreator.generateReplyKeyboard(splitter.split(
                         StreamEx.of(consultations)
-                                .map(Consultation::getSubject).map(Subject::getName).sorted().toList(),
+                                .map(Consultation::getSubject).map(Subject::getName).sorted()
+                                .append(BotCommand.getCommand(appUser.getType(),BotCommandLevel.SURVEY)).toList(),
                         1
                 ))
         );
@@ -154,7 +158,8 @@ public class ConsultationRegistrationSurvey implements Survey {
         return messageCreator.getReplyKeyboardMessage(chatId,
                 "Выберите цель записи.",
                 replyKeyboardCreator.generateReplyKeyboard(splitter.split(
-                        StreamEx.of(consultationTypeService.findAll()).map(ConsultationType::getName).toList(),
+                        StreamEx.of(consultationTypeService.findAll()).map(ConsultationType::getName)
+                                .append(BotCommand.getCommand(appUser.getType(),BotCommandLevel.SURVEY)).toList(),
                         1
                 ))
         );
