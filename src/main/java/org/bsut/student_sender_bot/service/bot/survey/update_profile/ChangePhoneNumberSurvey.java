@@ -14,7 +14,11 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -54,10 +58,12 @@ public class ChangePhoneNumberSurvey implements Survey {
     }
 
     private SendMessage getPhoneNumberMessage(Long chatId) {
-        return messageCreator.getReplyKeyboardMessage(chatId,
-                "Поделитесь номером телефона.",
-                replyKeyboardCreator.generatePhoneNumberReplyKeyboard()
-        );
+        return messageCreator.getReplyKeyboardMessage(chatId, "Поделитесь номером телефона.", getReplyKeyboard());
+    }
+    private ReplyKeyboardMarkup getReplyKeyboard() {
+        List<KeyboardRow> keyboardRows = new LinkedList<>(replyKeyboardCreator.generatePhoneNumberKeyboardRow());
+        keyboardRows.addAll(replyKeyboardCreator.generateCommandsKeyboardRows(BotCommandLevel.SURVEY, appUser.getType(),1));
+        return replyKeyboardCreator.getReplyKeyboard(keyboardRows,true);
     }
     private void handlePhoneNumberMessage(Message message) {
         this.phoneNumber = message.getContact().getPhoneNumber();

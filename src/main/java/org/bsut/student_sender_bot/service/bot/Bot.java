@@ -32,7 +32,7 @@ public class Bot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         Message message = update.getMessage();
-        if(update.hasCallbackQuery()) sendMessage(callbackHandler.getAnswer(update.getCallbackQuery().getData(),update.getCallbackQuery().getMessage().getChatId()));
+        if(update.hasCallbackQuery()) callbackHandler.handle(update.getCallbackQuery().getData(),update.getCallbackQuery().getMessage().getChatId());
         else if(update.hasMessage() && (message.hasText() || message.hasContact())) messaging.handle(message);
     }
     public void sendMessage(SendMessage message) {

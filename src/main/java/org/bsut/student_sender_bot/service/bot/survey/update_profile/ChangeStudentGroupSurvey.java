@@ -19,7 +19,11 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -64,15 +68,23 @@ public class ChangeStudentGroupSurvey implements Survey {
     private SendMessage getStudentGroupMessage(Long chatId) {
         return messageCreator.getReplyKeyboardMessage(chatId,
                 "Выберите вашу группу.",
-                replyKeyboardCreator.generateReplyKeyboard(splitter.split(
-                        StreamEx.of(studentGroupService.findAll()).map(StudentGroup::getName).append(withoutGroupName).sorted().toList(),
-                        2
-                ))
+                getReplyKeyboard()
         );
+    }
+    private ReplyKeyboardMarkup getReplyKeyboard() {
+        List<KeyboardRow> keyboardRows = new LinkedList<>(replyKeyboardCreator.getKeyboardRows(splitter.split(
+                StreamEx.of(studentGroupService.findAll()).map(StudentGroup::getName).append(withoutGroupName).sorted().toList(),
+                2
+        )));
+        keyboardRows.addAll(replyKeyboardCreator.generateCommandsKeyboardRows(BotCommandLevel.SURVEY, appUser.getType(),1));
+        return replyKeyboardCreator.getReplyKeyboard(keyboardRows,true);
     }
     private void handleGroupNameMessage(Message message) {
         String text = message.getText();
-        this.group = text.equals(withoutGroupName) ? null : studentGroupService.findByName(text);
-        this.appUser.setStudentGroup(group);
+        this.group = text.equals(withoutGroupName) ? new StudentGroup() : studentGroupService.findByName(text);
+        this.appUser.setStudentGroup(getStudentGroup());
+    }
+    private StudentGroup getStudentGroup() {
+        return Objects.isNull(group.getName()) ? null : group;
     }
 }

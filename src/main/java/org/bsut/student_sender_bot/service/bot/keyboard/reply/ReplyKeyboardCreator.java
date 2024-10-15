@@ -23,11 +23,11 @@ public class ReplyKeyboardCreator {
         return getReplyKeyboard(getKeyboardRows(dataMatrix),true);
     }
 
-    private ReplyKeyboardMarkup getReplyKeyboard(List<KeyboardRow> keyboard,boolean oneTimeKeyboard) {
+    public ReplyKeyboardMarkup getReplyKeyboard(List<KeyboardRow> keyboard,boolean oneTimeKeyboard) {
         return ReplyKeyboardMarkup.builder().resizeKeyboard(true).oneTimeKeyboard(oneTimeKeyboard).keyboard(keyboard).build();
     }
 
-    private <T> List<KeyboardRow> getKeyboardRows(List<List<T>> dataMatrix) {
+    public <T> List<KeyboardRow> getKeyboardRows(List<List<T>> dataMatrix) {
         return StreamEx.of(dataMatrix).map(row ->
                 StreamEx.of(row).map(Objects::toString).map(KeyboardButton::new).toCollection(KeyboardRow::new)
         ).toList();
@@ -47,5 +47,20 @@ public class ReplyKeyboardCreator {
                 2
                 )
         ), false);
+    }
+    public List<KeyboardRow> generatePhoneNumberKeyboardRow() {
+        return List.of(new KeyboardRow(
+                List.of(KeyboardButton.builder().text("Отправить номер телефона").requestContact(true).build())
+        ));
+    }
+    public List<KeyboardRow> generateCommandsKeyboardRows(BotCommandLevel botCommandLevel, UserType userType,int splitAmount) {
+        return getKeyboardRows(splitter.split(
+                        StreamEx.of(BotCommand.values())
+                                .filter(command->command.getLevel().equals(botCommandLevel)
+                                        && command.getUserTypeGroup().contains(userType))
+                                .map(BotCommand::getCommand).toList(),
+                        splitAmount
+                )
+        );
     }
 }

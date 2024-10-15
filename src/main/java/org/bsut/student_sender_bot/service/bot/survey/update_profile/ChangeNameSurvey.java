@@ -53,7 +53,11 @@ public class ChangeNameSurvey implements Survey {
         );
     }
     private SendMessage getNameMessage(Long chatId) {
-        return messageCreator.getDefaultMessage(chatId,"Введите ваше Ф.И.О.");
+        return messageCreator.getReplyKeyboardMessage(
+                chatId,
+                "Введите ваше Ф.И.О.",
+                replyKeyboardCreator.generateCommandsReplyKeyboard(BotCommandLevel.SURVEY, appUser.getType())
+        );
     }
     private void handleNameMessage(Message message) {
         this.name = message.getText();

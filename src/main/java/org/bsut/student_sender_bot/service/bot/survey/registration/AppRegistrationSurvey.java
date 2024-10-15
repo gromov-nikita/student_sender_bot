@@ -66,7 +66,7 @@ public class AppRegistrationSurvey implements Survey {
     @Override
     public SendMessage closeSurvey(Long chatId) {
         if(newUser) this.appUser = AppUser.builder().chatId(chatId).phoneNumber(phoneNumber)
-                .studentGroup(group).name(name).type(UserType.STUDENT).build();
+                .studentGroup(getStudentGroup()).name(name).type(UserType.STUDENT).build();
         if(changedUser) appUserService.save(appUser);
         return messageCreator.getReplyKeyboardMessage(
                 chatId,
@@ -74,9 +74,12 @@ public class AppRegistrationSurvey implements Survey {
                 replyKeyboardCreator.generateCommandsReplyKeyboard(BotCommandLevel.DEFAULT, appUser.getType())
         );
     }
+    private StudentGroup getStudentGroup() {
+        return Objects.isNull(group.getName()) ? null : group;
+    }
     private String getOnCloseMessage() {
         return "Здравствуйте, вот ваши данные: \n" + appUser.toString() +
-                "\n" + "Вот список всех доступных команд: \n"
+                "\n" + "Список всех доступных команд: \n"
                 + getAllCommandInfo(appUser.getType());
 
     }
@@ -115,6 +118,6 @@ public class AppRegistrationSurvey implements Survey {
     }
     private void handleGroupNameMessage(Message message) {
         String text = message.getText();
-        this.group = text.equals(withoutGroupName) ? null : studentGroupService.findByName(text);
+        this.group = text.equals(withoutGroupName) ? new StudentGroup() : studentGroupService.findByName(text);
     }
 }

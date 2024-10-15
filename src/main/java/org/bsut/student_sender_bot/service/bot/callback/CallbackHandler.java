@@ -2,11 +2,14 @@ package org.bsut.student_sender_bot.service.bot.callback;
 
 import lombok.RequiredArgsConstructor;
 import org.bsut.student_sender_bot.service.bot.SendMessageCreator;
-import org.bsut.student_sender_bot.service.bot.enums.CallbackDataPrefix;
+import org.bsut.student_sender_bot.service.bot.event.callback.RegCancelCallbackEvent;
+import org.bsut.student_sender_bot.service.bot.event.command.RegCancelEvent;
 import org.bsut.student_sender_bot.service.data.StudentRecordService;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
+import static org.bsut.student_sender_bot.service.bot.enums.CallbackDataPrefix.ATTENDANCE_CHECK;
 import static org.bsut.student_sender_bot.service.bot.enums.CallbackDataPrefix.REG_CANCEL;
 
 @Service
@@ -14,15 +17,13 @@ import static org.bsut.student_sender_bot.service.bot.enums.CallbackDataPrefix.R
 public class CallbackHandler {
 
     private final StudentRecordService studentRecordService;
+    private final ApplicationEventPublisher publisher;
     private final SendMessageCreator messageCreator;
 
-    public SendMessage getAnswer(String callbackData, long chatId) {
-        if(callbackData.contains(REG_CANCEL.getPrefix())) return cancelRegistration(callbackData, chatId);
-        throw new IllegalArgumentException("Не поддерживаемый формат данных.");
+    public void handle(String callbackData, long chatId) {
+        if(callbackData.contains(REG_CANCEL.getPrefix())) publisher.publishEvent(new RegCancelCallbackEvent(this,callbackData, chatId));
+        else if(callbackData.contains(ATTENDANCE_CHECK.getPrefix())) publisher.publishEvent(new RegCancelCallbackEvent(this,callbackData, chatId));
+        else throw new IllegalArgumentException("Не поддерживаемый формат данных.");
     }
-    private SendMessage cancelRegistration(String callbackData, long chatId) {
-        long delete = studentRecordService.delete(chatId, Long.parseLong(callbackData.replaceAll(REG_CANCEL.getPrefix(),"")));
-        if(delete == 0) return messageCreator.getDefaultMessage(chatId,"Ошибка. Запись уже была удалена.");
-        else return messageCreator.getDefaultMessage(chatId,"Запись успешно удалена.");
-    }
+
 }
