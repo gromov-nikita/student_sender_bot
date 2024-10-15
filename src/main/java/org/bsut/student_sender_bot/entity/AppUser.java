@@ -40,7 +40,7 @@ public class AppUser implements Serializable {
     @JoinColumn(nullable = true, name = "student_group_id")
     private StudentGroup studentGroup;
     @JsonIgnore
-    @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ConsultationTeacher> consultationTeachers;
     @Enumerated(EnumType.STRING)
     private UserType type;
