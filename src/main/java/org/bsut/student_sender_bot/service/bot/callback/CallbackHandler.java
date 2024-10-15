@@ -2,6 +2,7 @@ package org.bsut.student_sender_bot.service.bot.callback;
 
 import lombok.RequiredArgsConstructor;
 import org.bsut.student_sender_bot.service.bot.SendMessageCreator;
+import org.bsut.student_sender_bot.service.bot.event.callback.AttendanceCheckCallbackEvent;
 import org.bsut.student_sender_bot.service.bot.event.callback.RegCancelCallbackEvent;
 import org.bsut.student_sender_bot.service.bot.event.command.RegCancelEvent;
 import org.bsut.student_sender_bot.service.data.StudentRecordService;
@@ -20,7 +21,7 @@ public class CallbackHandler {
 
     public void handle(String callbackData, long chatId) {
         if(callbackData.contains(REG_CANCEL.getPrefix())) publisher.publishEvent(new RegCancelCallbackEvent(this,callbackData, chatId));
-        else if(callbackData.contains(ATTENDANCE_CHECK.getPrefix())) publisher.publishEvent(new RegCancelCallbackEvent(this,callbackData, chatId));
+        else if(callbackData.contains(ATTENDANCE_CHECK.getPrefix())) publisher.publishEvent(new AttendanceCheckCallbackEvent(this,callbackData, chatId));
         else throw new IllegalArgumentException("Не поддерживаемый формат данных.");
     }
 

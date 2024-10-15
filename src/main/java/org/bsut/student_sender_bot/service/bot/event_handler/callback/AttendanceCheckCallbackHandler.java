@@ -9,12 +9,9 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import static org.bsut.student_sender_bot.service.bot.enums.BotCommand.getAllCommandInfo;
-import static org.bsut.student_sender_bot.service.bot.enums.CallbackDataPrefix.REG_CANCEL;
-
 @Service
 @RequiredArgsConstructor
-public class RegCancelCallbackHandler {
+public class AttendanceCheckCallbackHandler {
 
     private final Bot bot;
     private final StudentRecordService studentRecordService;
@@ -23,11 +20,6 @@ public class RegCancelCallbackHandler {
     @Async
     @EventListener()
     public void handle(RegCancelCallbackEvent event) {
-        bot.sendMessage(messageCreator.getDefaultMessage(event.getChatId(),getMessage(event)));
-    }
-    private String getMessage(RegCancelCallbackEvent event) {
-        long delete = studentRecordService.delete(event.getChatId(), Long.parseLong(event.getCallbackData().replaceAll(REG_CANCEL.getPrefix(),"")));
-        if(delete == 0) return "Ошибка. Запись уже была удалена.";
-        else return "Запись успешно удалена.";
+        //bot.sendMessage(messageCreator.getDefaultMessage(event.getChatId(),getMessage(event)));
     }
 }
