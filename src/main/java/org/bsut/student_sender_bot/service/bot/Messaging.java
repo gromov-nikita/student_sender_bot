@@ -43,6 +43,7 @@ public class Messaging {
         if(text.equals(REG.getCommand())) publisher.publishEvent(new RegEvent(this,message));
         else if(text.equals(REG_INFO.getCommand())) publisher.publishEvent(new RegInfoEvent(this,message));
         else if(text.equals(REG_CANCEL.getCommand())) publisher.publishEvent(new RegCancelEvent(this,message));
+        else if(text.equals(PROFILE.getCommand())) publisher.publishEvent(new ProfileEvent(this,message));
         else if(text.equals(COMMANDS.getCommand())) publisher.publishEvent(new CommandsEvent(this,message));
         else if(text.equals("/start")) publisher.publishEvent(new StartEvent(this,message));
         else publisher.publishEvent(new IncorrectEvent(this,message));

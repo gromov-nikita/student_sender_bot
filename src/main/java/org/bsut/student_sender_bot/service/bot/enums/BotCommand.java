@@ -19,6 +19,12 @@ public enum BotCommand {
             DEFAULT,
             List.of(UserType.values())
     ),
+    PROFILE(
+            "/profile",
+            "Профиль.",
+            DEFAULT,
+            List.of(UserType.values())
+    ),
     REG(
             "/reg",
             "Регистрация на консультацию.",

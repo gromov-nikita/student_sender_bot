@@ -36,8 +36,7 @@ public class AppUser implements Serializable {
     private long chatId;
     @Column(unique = true, nullable = false)
     private String phoneNumber;
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(nullable = true, name = "student_group_id")
     private StudentGroup studentGroup;
     @JsonIgnore
