@@ -16,9 +16,7 @@ import static org.bsut.student_sender_bot.service.bot.enums.CallbackDataPrefix.R
 @RequiredArgsConstructor
 public class CallbackHandler {
 
-    private final StudentRecordService studentRecordService;
     private final ApplicationEventPublisher publisher;
-    private final SendMessageCreator messageCreator;
 
     public void handle(String callbackData, long chatId) {
         if(callbackData.contains(REG_CANCEL.getPrefix())) publisher.publishEvent(new RegCancelCallbackEvent(this,callbackData, chatId));
