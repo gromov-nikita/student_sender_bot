@@ -54,6 +54,7 @@ public class ChangeStudentGroupSurvey implements Survey {
 
     @Override
     public SendMessage closeSurvey(Long chatId) {
+        appUserService.save(appUser);
         return messageCreator.getReplyKeyboardMessage(
                 chatId,
                 "Группа изменена.",

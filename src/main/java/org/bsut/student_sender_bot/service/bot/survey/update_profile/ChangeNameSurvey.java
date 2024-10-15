@@ -45,6 +45,7 @@ public class ChangeNameSurvey implements Survey {
 
     @Override
     public SendMessage closeSurvey(Long chatId) {
+        appUserService.save(appUser);
         return messageCreator.getReplyKeyboardMessage(
                 chatId,
                 "Ф.И.О. успешно изменено.",

@@ -45,6 +45,7 @@ public class ChangePhoneNumberSurvey implements Survey {
 
     @Override
     public SendMessage closeSurvey(Long chatId) {
+        appUserService.save(appUser);
         return messageCreator.getReplyKeyboardMessage(
                 chatId,
                 "Номер телефона изменен.",
