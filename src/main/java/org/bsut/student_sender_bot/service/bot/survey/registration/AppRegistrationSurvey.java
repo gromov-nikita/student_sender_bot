@@ -14,6 +14,7 @@ import org.bsut.student_sender_bot.service.bot.survey.Survey;
 import org.bsut.student_sender_bot.service.data.StudentGroupService;
 import org.bsut.student_sender_bot.service.data.AppUserService;
 import org.bsut.student_sender_bot.service.list_handler.Splitter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -43,7 +44,8 @@ public class AppRegistrationSurvey implements Survey {
     private String phoneNumber;
     private String name;
     private StudentGroup group;
-    private final static String withoutGroupName = "Отсутствует";
+    @Value(value = "${const.group.without.name}")
+    private String withoutGroupName;
 
     @Override
     public SendMessage nextMessage(Long chatId) {

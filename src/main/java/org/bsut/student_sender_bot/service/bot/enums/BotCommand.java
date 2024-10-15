@@ -43,6 +43,24 @@ public enum BotCommand {
             DEFAULT,
             List.of(UserType.STUDENT)
     ),
+    NAME_CHANGE(
+            "/nameChange",
+            "Смена Ф.И.О.",
+            DEFAULT,
+            List.of(UserType.values())
+    ),
+    PHONE_NUMBER_CHANGE(
+            "/phoneNumberChange",
+            "Смена номера телефона.",
+            DEFAULT,
+            List.of(UserType.values())
+    ),
+    STUDENT_GROUP_CHANGE(
+            "/studentGroupChange",
+            "Смена группы.",
+            DEFAULT,
+            List.of(UserType.values())
+    ),
     STOP(
             "/stop",
             "Прекращение опроса.",
