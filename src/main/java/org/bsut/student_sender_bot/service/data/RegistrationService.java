@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.bsut.student_sender_bot.dao.criteriaApi.RegistrationCriteriaApi;
 import org.bsut.student_sender_bot.dao.repository.RegistrationRepo;
 import org.bsut.student_sender_bot.dao.specification.RegistrationSpec;
+import org.bsut.student_sender_bot.entity.AppUser;
 import org.bsut.student_sender_bot.entity.Consultation;
 import org.bsut.student_sender_bot.entity.Registration;
 import org.springframework.data.jpa.domain.Specification;
@@ -33,5 +34,13 @@ public class RegistrationService {
     }
     public List<Registration> findAllWithStudentRecordsAndDate(LocalDate localDate) {
         return registrationCriteriaApi.getWithStudentRecordsAndSpec(registrationSpec.getDate(localDate));
+    }
+    public List<Registration> findAllWithStudentRecordsAndLocalDateAndTeacher(LocalDate localDate, AppUser appUser) {
+        return registrationCriteriaApi.getWithStudentRecordsAndSpec(
+                Specification.allOf(
+                        registrationSpec.getDate(localDate),
+                        registrationSpec.getTeacher(appUser)
+                )
+        );
     }
 }

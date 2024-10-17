@@ -21,4 +21,13 @@ public class RegistrationSpec {
                 localDate
         );
     }
+    public Specification<Registration> getTeacher(AppUser appUser) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(
+                root
+                        .join(Registration_.consultation)
+                        .join(Consultation_.consultationTeachers)
+                        .get(ConsultationTeacher_.appUser),
+                appUser
+        );
+    }
 }

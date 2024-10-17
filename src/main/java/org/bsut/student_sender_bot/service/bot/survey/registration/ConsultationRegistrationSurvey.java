@@ -119,7 +119,7 @@ public class ConsultationRegistrationSurvey implements Survey {
     }
     private StudentRecord createStudentRecord() {
         return StudentRecord.builder().appUser(appUser).type(type).registration(registrationService.getOrSave(
-                consultationService.findBySessionAndUserAndSubject(session, appUser, subject),
+                consultationService.findBySessionAndStudentAndSubject(session, appUser, subject),
                 date
         )).build();
     }
@@ -139,7 +139,7 @@ public class ConsultationRegistrationSurvey implements Survey {
         ).toList();
     }
     private SendMessage getSubjectMessage(Long chatId) {
-        List<Consultation> consultations = consultationService.findBySessionAndUser(session, appUser);
+        List<Consultation> consultations = consultationService.findBySessionAndStudent(session, appUser);
         this.hasConsultations = !consultations.isEmpty();
         return hasConsultations ? handleWithConsultationCase(chatId,consultations) : null;
     }

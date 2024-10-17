@@ -8,7 +8,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -16,24 +15,32 @@ public class ConsultationService {
     private final ConsultationRepo consultationRepo;
     private final ConsultationSpec consultationSpec;
 
-    public List<Consultation> findBySessionAndUser(Session session, AppUser appUser) {
+    public List<Consultation> findBySessionAndStudent(Session session, AppUser student) {
         return consultationRepo.findAll(
                 Specification.allOf(
                         consultationSpec.getBySession(session),
-                        consultationSpec.getByUser(appUser)
+                        consultationSpec.getByStudent(student)
                 )
         );
     }
-    public Consultation findBySessionAndUserAndSubject(Session session, AppUser appUser, Subject subject) {
+    public List<Consultation> findBySessionAndTeacher(Session session, AppUser teacher) {
+        return consultationRepo.findAll(
+                Specification.allOf(
+                        consultationSpec.getBySession(session),
+                        consultationSpec.getByTeacher(teacher)
+                )
+        );
+    }
+    public Consultation findBySessionAndStudentAndSubject(Session session, AppUser student, Subject subject) {
         return consultationRepo.findOne(
                 Specification.allOf(
                         consultationSpec.getBySession(session),
-                        consultationSpec.getByUser(appUser),
+                        consultationSpec.getByStudent(student),
                         consultationSpec.getBySubject(subject)
                 )
         ).orElseThrow();
     }
-    public List<Consultation> getUserConsultations(AppUser appUser) {
-        return consultationRepo.findAll(consultationSpec.getByUser(appUser));
+    public List<Consultation> getStudentConsultations(AppUser student) {
+        return consultationRepo.findAll(consultationSpec.getByStudent(student));
     }
 }

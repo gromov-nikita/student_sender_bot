@@ -25,6 +25,12 @@ public enum BotCommand {
             DEFAULT,
             List.of(UserType.values())
     ),
+    ATTENDANCE_CHECK(
+            "/attendanceCheck",
+            "Отметить отсутствующих.",
+            DEFAULT,
+            List.of(UserType.TEACHER)
+    ),
     REG(
             "/reg",
             "Регистрация на консультацию.",

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.bsut.student_sender_bot.dao.repository.StudentRecordRepo;
 import org.bsut.student_sender_bot.dao.specification.StudentRecordSpec;
 import org.bsut.student_sender_bot.entity.AppUser;
+import org.bsut.student_sender_bot.entity.Registration;
 import org.bsut.student_sender_bot.entity.StudentRecord;
 import org.bsut.student_sender_bot.entity.Subject;
 import org.springframework.data.jpa.domain.Specification;
@@ -42,5 +43,11 @@ public class StudentRecordService {
     }
     public List<StudentRecord> findAllByDate(LocalDate localDate) {
         return studentRecordRepo.findAll(studentRecordSpec.getDate(localDate));
+    }
+    public List<StudentRecord> findAllByRegistration(Registration registration) {
+        return studentRecordRepo.findAllByRegistration(registration);
+    }
+    public StudentRecord getById(long id) {
+        return studentRecordRepo.findById(id).get();
     }
 }

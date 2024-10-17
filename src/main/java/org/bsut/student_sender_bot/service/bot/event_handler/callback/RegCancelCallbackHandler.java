@@ -23,10 +23,10 @@ public class RegCancelCallbackHandler {
     @Async
     @EventListener()
     public void handle(RegCancelCallbackEvent event) {
-        bot.sendMessage(messageCreator.getDefaultMessage(event.getChatId(),getMessage(event)));
+        bot.sendMessage(messageCreator.getDefaultMessage(event.getMessage().getChatId(),getMessage(event)));
     }
     private String getMessage(RegCancelCallbackEvent event) {
-        long delete = studentRecordService.delete(event.getChatId(), Long.parseLong(event.getCallbackData().replaceAll(REG_CANCEL.getPrefix(),"")));
+        long delete = studentRecordService.delete(event.getMessage().getChatId(), Long.parseLong(event.getCallbackData().replaceAll(REG_CANCEL.getPrefix(),"")));
         if(delete == 0) return "Ошибка. Запись уже была удалена.";
         else return "Запись успешно удалена.";
     }

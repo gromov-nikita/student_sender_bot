@@ -4,8 +4,6 @@ import org.bsut.student_sender_bot.entity.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-
 @Service
 public class ConsultationSpec {
     public Specification<Consultation> getByGroup(StudentGroup group) {
@@ -18,12 +16,20 @@ public class ConsultationSpec {
         return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(Consultation_.subject),subject);
     }
 
-    public Specification<Consultation> getByUser(AppUser appUser) {
-        return (root, query, criteriaBuilder) -> criteriaBuilder.isMember(appUser,
+    public Specification<Consultation> getByStudent(AppUser student) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.isMember(student,
                 root
                         .join(Consultation_.consultationStudentGroups)
                         .join(ConsultationStudentGroup_.studentGroup)
                         .get(StudentGroup_.appUsers)
+        );
+    }
+    public Specification<Consultation> getByTeacher(AppUser teacher) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(
+                root
+                        .join(Consultation_.consultationTeachers)
+                        .get(ConsultationTeacher_.appUser),
+                teacher
         );
     }
 

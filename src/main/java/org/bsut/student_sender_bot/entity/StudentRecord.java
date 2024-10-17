@@ -25,4 +25,6 @@ public class StudentRecord {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "user_id")
     private AppUser appUser;
+    @Column(nullable = false)
+    private boolean attendance;
 }
