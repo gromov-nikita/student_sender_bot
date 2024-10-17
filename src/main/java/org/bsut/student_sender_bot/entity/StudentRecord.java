@@ -27,4 +27,7 @@ public class StudentRecord {
     private AppUser appUser;
     @Column(nullable = false)
     private boolean attendance;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = true, name = "student_record_cancel_type_id")
+    private StudentRecordCancelType studentRecordCancelType;
 }
