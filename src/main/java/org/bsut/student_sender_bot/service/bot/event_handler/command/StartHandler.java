@@ -34,10 +34,7 @@ public class StartHandler {
     public void handle(StartEvent event) {
         Long chatId = event.getMessage().getChatId();
         surveyService.startSurvey(chatId,appContext.getBean(AppRegistrationSurvey.class));
-        handleSendMessage(surveyService.getSurveyState(chatId).nextMessage(chatId), chatId);
+        bot.sendMessage(surveyService.getSurveyState(chatId).nextMessage(chatId));
     }
-    private void handleSendMessage(SendMessage sendMessage, Long chatId) {
-        if(Objects.isNull(sendMessage)) bot.sendMessage(surveyService.removeSurvey(chatId).closeSurvey(chatId));
-        else bot.sendMessage(sendMessage);
-    }
+
 }

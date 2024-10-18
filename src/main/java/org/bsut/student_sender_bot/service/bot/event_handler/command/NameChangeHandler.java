@@ -26,10 +26,6 @@ public class NameChangeHandler {
     public void handle(NameChangeEvent event) {
         Long chatId = event.getMessage().getChatId();
         surveyService.startSurvey(chatId,appContext.getBean(ChangeNameSurvey.class));
-        handleSendMessage(surveyService.getSurveyState(chatId).nextMessage(chatId), chatId);
-    }
-    private void handleSendMessage(SendMessage sendMessage, Long chatId) {
-        if(Objects.isNull(sendMessage)) bot.sendMessage(surveyService.removeSurvey(chatId).closeSurvey(chatId));
-        else bot.sendMessage(sendMessage);
+        bot.sendMessage(surveyService.getSurveyState(chatId).nextMessage(chatId));
     }
 }

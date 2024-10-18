@@ -28,10 +28,6 @@ public class AttendanceCheckHandler {
     public void handle(AttendanceCheckEvent event) {
         Long chatId = event.getMessage().getChatId();
         surveyService.startSurvey(chatId,appContext.getBean(AttendanceCheckSurvey.class));
-        handleSendMessage(surveyService.getSurveyState(chatId).nextMessage(chatId), chatId);
-    }
-    private void handleSendMessage(SendMessage sendMessage, Long chatId) {
-        if(Objects.isNull(sendMessage)) bot.sendMessage(surveyService.removeSurvey(chatId).closeSurvey(chatId));
-        else bot.sendMessage(sendMessage);
+        bot.sendMessage(surveyService.getSurveyState(chatId).nextMessage(chatId));
     }
 }

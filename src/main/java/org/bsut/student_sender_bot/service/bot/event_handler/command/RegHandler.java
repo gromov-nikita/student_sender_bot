@@ -26,10 +26,7 @@ public class RegHandler {
     public void handle(RegEvent event) {
         Long chatId = event.getMessage().getChatId();
         surveyService.startSurvey(chatId,appContext.getBean(ConsultationRegistrationSurvey.class));
-        handleSendMessage(surveyService.getSurveyState(chatId).nextMessage(chatId), chatId);
+        bot.sendMessage(surveyService.getSurveyState(chatId).nextMessage(chatId));
     }
-    private void handleSendMessage(SendMessage sendMessage, Long chatId) {
-        if(Objects.isNull(sendMessage)) bot.sendMessage(surveyService.removeSurvey(chatId).closeSurvey(chatId));
-        else bot.sendMessage(sendMessage);
-    }
+
 }
