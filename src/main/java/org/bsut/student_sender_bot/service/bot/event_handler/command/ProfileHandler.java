@@ -2,21 +2,16 @@ package org.bsut.student_sender_bot.service.bot.event_handler.command;
 
 import lombok.RequiredArgsConstructor;
 import org.bsut.student_sender_bot.entity.AppUser;
-import org.bsut.student_sender_bot.entity.StudentRecord;
 import org.bsut.student_sender_bot.service.bot.Bot;
 import org.bsut.student_sender_bot.service.bot.SendMessageCreator;
 import org.bsut.student_sender_bot.service.bot.enums.BotCommandLevel;
 import org.bsut.student_sender_bot.service.bot.event.command.ProfileEvent;
-import org.bsut.student_sender_bot.service.bot.event.command.RegCancelEvent;
 import org.bsut.student_sender_bot.service.bot.keyboard.reply.ReplyKeyboardCreator;
-import org.bsut.student_sender_bot.service.data.AppUserService;
+import org.bsut.student_sender_bot.service.data.sql.AppUserService;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

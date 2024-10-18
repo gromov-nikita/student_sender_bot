@@ -7,7 +7,7 @@ import org.bsut.student_sender_bot.service.bot.enums.BotCommand;
 import org.bsut.student_sender_bot.service.bot.event.survey.SurveyEvent;
 import org.bsut.student_sender_bot.service.bot.event.command.*;
 import org.bsut.student_sender_bot.service.bot.survey.SurveyService;
-import org.bsut.student_sender_bot.service.data.AppUserService;
+import org.bsut.student_sender_bot.service.data.sql.AppUserService;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Message;

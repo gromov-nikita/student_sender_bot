@@ -5,8 +5,7 @@ import org.bsut.student_sender_bot.entity.StudentRecord;
 import org.bsut.student_sender_bot.service.bot.Bot;
 import org.bsut.student_sender_bot.service.bot.SendMessageCreator;
 import org.bsut.student_sender_bot.service.bot.event.callback.AttendanceCheckCallbackEvent;
-import org.bsut.student_sender_bot.service.bot.event.callback.RegCancelCallbackEvent;
-import org.bsut.student_sender_bot.service.data.StudentRecordService;
+import org.bsut.student_sender_bot.service.data.sql.StudentRecordService;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -18,7 +17,6 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.util.List;
 
 import static org.bsut.student_sender_bot.service.bot.enums.CallbackDataPrefix.ATTENDANCE_CHECK;
-import static org.bsut.student_sender_bot.service.bot.enums.CallbackDataPrefix.REG_CANCEL;
 
 @Service
 @RequiredArgsConstructor

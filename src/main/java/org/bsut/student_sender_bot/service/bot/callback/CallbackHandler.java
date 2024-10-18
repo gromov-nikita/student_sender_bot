@@ -1,14 +1,10 @@
 package org.bsut.student_sender_bot.service.bot.callback;
 
 import lombok.RequiredArgsConstructor;
-import org.bsut.student_sender_bot.service.bot.SendMessageCreator;
 import org.bsut.student_sender_bot.service.bot.event.callback.AttendanceCheckCallbackEvent;
 import org.bsut.student_sender_bot.service.bot.event.callback.RegCancelCallbackEvent;
-import org.bsut.student_sender_bot.service.bot.event.command.RegCancelEvent;
-import org.bsut.student_sender_bot.service.data.StudentRecordService;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 import static org.bsut.student_sender_bot.service.bot.enums.CallbackDataPrefix.ATTENDANCE_CHECK;

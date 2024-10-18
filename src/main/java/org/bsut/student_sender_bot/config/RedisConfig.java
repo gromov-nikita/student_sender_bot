@@ -29,6 +29,20 @@ public class RedisConfig {
                 .withInitialCacheConfigurations(getTimeToLiveConfig(config))
                 .build();
     }
+    @Bean
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        RedisTemplate<String, Object> template = new RedisTemplate<>();
+
+        template.setKeySerializer(new StringRedisSerializer());
+
+        template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+
+        template.setHashKeySerializer(new StringRedisSerializer());
+        template.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
+
+        template.setConnectionFactory(redisConnectionFactory);
+        return template;
+    }
     private Map<String, RedisCacheConfiguration> getTimeToLiveConfig(RedisCacheConfiguration config) {
         Map<String, RedisCacheConfiguration> timeToLiveConfig = new HashMap<>();
         timeToLiveConfig.put("user", config.entryTtl(Duration.ofMinutes(10)));

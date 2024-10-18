@@ -1,8 +1,7 @@
-package org.bsut.student_sender_bot.service.data;
+package org.bsut.student_sender_bot.service.data.sql;
 
 import lombok.RequiredArgsConstructor;
 import org.bsut.student_sender_bot.dao.repository.SubjectRepo;
-import org.bsut.student_sender_bot.entity.StudentGroup;
 import org.bsut.student_sender_bot.entity.Subject;
 import org.springframework.stereotype.Service;
 

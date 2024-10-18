@@ -1,11 +1,10 @@
-package org.bsut.student_sender_bot.service.data;
+package org.bsut.student_sender_bot.service.data.sql;
 
 import lombok.RequiredArgsConstructor;
 import org.bsut.student_sender_bot.dao.repository.StudentGroupRepo;
 import org.bsut.student_sender_bot.dao.specification.StudentGroupSpec;
 import org.bsut.student_sender_bot.entity.Session;
 import org.bsut.student_sender_bot.entity.StudentGroup;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

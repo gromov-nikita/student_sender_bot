@@ -3,8 +3,15 @@ package org.bsut.student_sender_bot.service.bot.event_handler.callback;
 import lombok.RequiredArgsConstructor;
 import org.bsut.student_sender_bot.service.bot.Bot;
 import org.bsut.student_sender_bot.service.bot.SendMessageCreator;
+import org.bsut.student_sender_bot.service.bot.enums.CallbackDataPrefix;
 import org.bsut.student_sender_bot.service.bot.event.callback.RegCancelCallbackEvent;
-import org.bsut.student_sender_bot.service.data.StudentRecordService;
+import org.bsut.student_sender_bot.service.bot.survey.Survey;
+import org.bsut.student_sender_bot.service.bot.survey.SurveyService;
+import org.bsut.student_sender_bot.service.bot.survey.callback.RegCancelSurvey;
+import org.bsut.student_sender_bot.service.bot.survey.registration.ConsultationRegistrationSurvey;
+import org.bsut.student_sender_bot.service.data.redis.CallbackDataService;
+import org.bsut.student_sender_bot.service.data.sql.StudentRecordService;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -19,15 +26,17 @@ public class RegCancelCallbackHandler {
     private final Bot bot;
     private final StudentRecordService studentRecordService;
     private final SendMessageCreator messageCreator;
+    private final CallbackDataService callbackDataService;
+    private final SurveyService surveyService;
+    private final ApplicationContext appContext;
 
     @Async
     @EventListener()
     public void handle(RegCancelCallbackEvent event) {
-        bot.sendMessage(messageCreator.getDefaultMessage(event.getMessage().getChatId(),getMessage(event)));
-    }
-    private String getMessage(RegCancelCallbackEvent event) {
-        long delete = studentRecordService.delete(event.getMessage().getChatId(), Long.parseLong(event.getCallbackData().replaceAll(REG_CANCEL.getPrefix(),"")));
-        if(delete == 0) return "Ошибка. Запись уже была удалена.";
-        else return "Запись успешно удалена.";
+        Long chatId = event.getMessage().getChatId();
+        callbackDataService.save(REG_CANCEL,event.getMessage().getChatId(),event.getCallbackData());
+        surveyService.startSurvey(chatId,appContext.getBean(RegCancelSurvey.class));
+        bot.sendMessage(surveyService.getSurveyState(chatId).nextMessage(chatId));
+
     }
 }

@@ -8,7 +8,7 @@ import org.bsut.student_sender_bot.service.bot.SendMessageCreator;
 import org.bsut.student_sender_bot.service.bot.enums.BotCommandLevel;
 import org.bsut.student_sender_bot.service.bot.keyboard.reply.ReplyKeyboardCreator;
 import org.bsut.student_sender_bot.service.bot.survey.Survey;
-import org.bsut.student_sender_bot.service.data.AppUserService;
+import org.bsut.student_sender_bot.service.data.sql.AppUserService;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;

@@ -8,7 +8,7 @@ import org.bsut.student_sender_bot.entity.Registration;
 import org.bsut.student_sender_bot.entity.StudentRecord;
 import org.bsut.student_sender_bot.service.bot.SendMessageCreator;
 import org.bsut.student_sender_bot.service.bot.Bot;
-import org.bsut.student_sender_bot.service.data.RegistrationService;
+import org.bsut.student_sender_bot.service.data.sql.RegistrationService;
 import org.bsut.student_sender_bot.service.date.DateFormatterCreator;
 import org.bsut.student_sender_bot.service.date.DateHandler;
 import org.springframework.scheduling.annotation.Scheduled;

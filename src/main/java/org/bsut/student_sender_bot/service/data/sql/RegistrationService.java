@@ -1,4 +1,4 @@
-package org.bsut.student_sender_bot.service.data;
+package org.bsut.student_sender_bot.service.data.sql;
 
 import lombok.RequiredArgsConstructor;
 import org.bsut.student_sender_bot.dao.criteriaApi.RegistrationCriteriaApi;

@@ -1,17 +1,15 @@
 package org.bsut.student_sender_bot.service.bot.event_handler.command;
 
 import lombok.RequiredArgsConstructor;
-import org.bsut.student_sender_bot.entity.AppUser;
 import org.bsut.student_sender_bot.entity.enums.UserType;
 import org.bsut.student_sender_bot.service.bot.Bot;
 import org.bsut.student_sender_bot.service.bot.SendMessageCreator;
 import org.bsut.student_sender_bot.service.bot.enums.BotCommandLevel;
-import org.bsut.student_sender_bot.service.bot.event.command.StartEvent;
 import org.bsut.student_sender_bot.service.bot.event.command.StopEvent;
 import org.bsut.student_sender_bot.service.bot.keyboard.reply.ReplyKeyboardCreator;
 import org.bsut.student_sender_bot.service.bot.survey.SurveyService;
 import org.bsut.student_sender_bot.service.bot.survey.registration.AppRegistrationSurvey;
-import org.bsut.student_sender_bot.service.data.AppUserService;
+import org.bsut.student_sender_bot.service.data.sql.AppUserService;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
