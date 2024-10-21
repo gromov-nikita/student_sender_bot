@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
@@ -31,7 +32,7 @@ public class TeacherInfoSender {
     @Scheduled(cron = "${cron.send-student.time-interval}")
     @Transactional
     public void sendStudentList() {
-        StreamEx.of(registrationService.findAllWithStudentRecordsAndDate(dateHandler.getSaturday())).mapToEntry(
+        StreamEx.of(registrationService.findAllWithNotCanceledStudentRecordsAndDate(dateHandler.getSaturday())).mapToEntry(
                 registration-> StreamEx.of(registration.getConsultation().getConsultationTeachers())
                         .map(ConsultationTeacher::getAppUser)
                         .map(AppUser::getChatId).toList(),
@@ -42,7 +43,7 @@ public class TeacherInfoSender {
         return registration.getDate().format(dateFormatterCreator.getUserLocalDateFormatter()) + " числа " +
                 "c " + registration.getConsultation().getStartTime() + " до " + registration.getConsultation().getEndTime()
                 + " к вам записаны на консультацию по предмету " + registration.getConsultation().getSubject().getName() + " студенты: " + "\n\n" +
-                StreamEx.of(registration.getStudentRecords())
+                StreamEx.of(registration.getStudentRecords()).filter(reg-> Objects.isNull(reg.getStudentRecordCancelType()))
                         .sortedBy(record->record.getAppUser().getStudentGroup().getName())
                         .map(this::stringify).map(str->str+"\n\n").reduce(String::concat).get();
     }

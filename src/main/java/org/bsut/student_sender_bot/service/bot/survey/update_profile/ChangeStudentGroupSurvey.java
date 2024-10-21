@@ -39,8 +39,6 @@ public class ChangeStudentGroupSurvey implements Survey {
     private final AppUserService appUserService;
     private final Splitter splitter;
 
-    @Value(value = "${const.group.without.name}")
-    private String withoutGroupName;
     private AppUser appUser;
     private StudentGroup group;
 
@@ -73,7 +71,7 @@ public class ChangeStudentGroupSurvey implements Survey {
     }
     private ReplyKeyboardMarkup getReplyKeyboard() {
         List<KeyboardRow> keyboardRows = new LinkedList<>(replyKeyboardCreator.getKeyboardRows(splitter.split(
-                StreamEx.of(studentGroupService.findAll()).map(StudentGroup::getName).append(withoutGroupName).sorted().toList(),
+                StreamEx.of(studentGroupService.findAll()).map(StudentGroup::getName).sorted().toList(),
                 2
         )));
         keyboardRows.addAll(replyKeyboardCreator.generateCommandsKeyboardRows(BotCommandLevel.SURVEY, appUser.getType(),1));
@@ -81,7 +79,7 @@ public class ChangeStudentGroupSurvey implements Survey {
     }
     private void handleGroupNameMessage(Message message) {
         String text = message.getText();
-        this.group = text.equals(withoutGroupName) ? new StudentGroup() : studentGroupService.findByName(text);
+        this.group = studentGroupService.findByName(text);
         this.appUser.setStudentGroup(getStudentGroup());
     }
     private StudentGroup getStudentGroup() {
