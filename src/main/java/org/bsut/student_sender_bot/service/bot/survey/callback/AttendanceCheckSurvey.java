@@ -75,7 +75,7 @@ public class AttendanceCheckSurvey implements Survey {
     }
     private SendMessage getSubjectNameMessage(Long chatId) {
         this.session = sessionService.getCurrentSession();
-        this.registrations = registrationService.findAllWithStudentRecordsAndLocalDateAndTeacher(dateHandler.getSaturday(), appUser);
+        this.registrations = registrationService.findAllWithNotCanceledStudentRecordsAndLocalDateAndTeacher(dateHandler.getSaturday(), appUser);
         return messageCreator.getReplyKeyboardMessage(chatId,
                 "Выберите предмет.",
                 replyKeyboardCreator.generateReplyKeyboard(splitter.split(

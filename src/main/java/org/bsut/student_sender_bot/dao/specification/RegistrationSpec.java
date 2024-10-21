@@ -30,4 +30,11 @@ public class RegistrationSpec {
                 appUser
         );
     }
+    public Specification<Registration> getWithNotCanceled() {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.isNull(
+                root
+                        .join(Registration_.studentRecords)
+                        .get(StudentRecord_.studentRecordCancelType)
+        );
+    }
 }

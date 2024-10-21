@@ -35,11 +35,12 @@ public class RegistrationService {
     public List<Registration> findAllWithStudentRecordsAndDate(LocalDate localDate) {
         return registrationCriteriaApi.getWithStudentRecordsAndSpec(registrationSpec.getDate(localDate));
     }
-    public List<Registration> findAllWithStudentRecordsAndLocalDateAndTeacher(LocalDate localDate, AppUser appUser) {
-        return registrationCriteriaApi.getWithStudentRecordsAndSpec(
+    public List<Registration> findAllWithNotCanceledStudentRecordsAndLocalDateAndTeacher(LocalDate localDate, AppUser appUser) {
+        return registrationRepo.findAll(
                 Specification.allOf(
                         registrationSpec.getDate(localDate),
-                        registrationSpec.getTeacher(appUser)
+                        registrationSpec.getTeacher(appUser),
+                        registrationSpec.getWithNotCanceled()
                 )
         );
     }
