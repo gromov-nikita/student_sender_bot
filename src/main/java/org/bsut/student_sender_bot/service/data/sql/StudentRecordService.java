@@ -21,16 +21,18 @@ public class StudentRecordService {
     public StudentRecord save(StudentRecord studentRecord) {
         return studentRecordRepo.save(studentRecord);
     }
-    public List<StudentRecord> findAllByChatIdAndDateAfterOrEqually(long chatId, LocalDate localDate) {
+    public List<StudentRecord> findAllNotCanceledByChatIdAndDateAfterOrEqually(long chatId, LocalDate localDate) {
         return studentRecordRepo.findAll(Specification.allOf(
                 studentRecordSpec.getChatId(chatId),
-                studentRecordSpec.getDateAfterOrEqually(localDate)
+                studentRecordSpec.getDateAfterOrEqually(localDate),
+                studentRecordSpec.getCancelType(null)
         ));
     }
-    public List<StudentRecord> findAllByUserAndDateAfterOrEquallyAndSubject(AppUser appUser, LocalDate localDate, Subject subject) {
+    public List<StudentRecord> findAllNotCanceledByUserAndDateAfterOrEquallyAndSubject(AppUser appUser, LocalDate localDate, Subject subject) {
         return studentRecordRepo.findAll(Specification.allOf(
                 studentRecordSpec.getUser(appUser),
-                studentRecordSpec.getDateAfterOrEquallyAndSubject(localDate,subject)
+                studentRecordSpec.getDateAfterOrEquallyAndSubject(localDate,subject),
+                studentRecordSpec.getCancelType(null)
         ));
     }
     public long delete(long chatId, long id) {
@@ -41,11 +43,11 @@ public class StudentRecordService {
                 )
         );
     }
-    public List<StudentRecord> findAllByDate(LocalDate localDate) {
-        return studentRecordRepo.findAll(studentRecordSpec.getDate(localDate));
-    }
     public List<StudentRecord> findAllByRegistration(Registration registration) {
-        return studentRecordRepo.findAllByRegistration(registration);
+        return studentRecordRepo.findAll(Specification.allOf(
+                studentRecordSpec.getRegistration(registration),
+                studentRecordSpec.getCancelType(null)
+        ));
     }
     public StudentRecord getById(long id) {
         return studentRecordRepo.findById(id).get();

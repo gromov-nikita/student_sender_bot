@@ -43,7 +43,7 @@ public class RegCancelHandler {
     @Transactional
     public void handle(RegCancelEvent event) {
         Long chatId = event.getMessage().getChatId();
-        List<StudentRecord> recordGroup = studentRecordService.findAllByChatIdAndDateAfterOrEqually(chatId, LocalDate.now());
+        List<StudentRecord> recordGroup = studentRecordService.findAllNotCanceledByChatIdAndDateAfterOrEqually(chatId, LocalDate.now());
         if(recordGroup.isEmpty()) bot.sendMessage(getCancelWithoutRegistrationMessage(chatId));
         else bot.sendMessage(getCancelRegistrationMessage(chatId,recordGroup));
     }

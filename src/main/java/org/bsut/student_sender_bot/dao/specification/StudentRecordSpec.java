@@ -6,6 +6,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Service
 public class StudentRecordSpec {
@@ -48,5 +49,14 @@ public class StudentRecordSpec {
                     criteriaBuilder.equal(registrationJoin.join(Registration_.consultation).get(Consultation_.subject),subject)
             );
         };
+    }
+    public Specification<StudentRecord> getCancelType(StudentRecordCancelType studentRecordCancelType) {
+        return (root, query, criteriaBuilder) -> Objects.isNull(studentRecordCancelType) ?
+                criteriaBuilder.isNull(root.get(StudentRecord_.studentRecordCancelType))
+                :
+                criteriaBuilder.equal(root.get(StudentRecord_.studentRecordCancelType), studentRecordCancelType);
+    }
+    public Specification<StudentRecord> getRegistration(Registration reg) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(StudentRecord_.registration), reg);
     }
 }

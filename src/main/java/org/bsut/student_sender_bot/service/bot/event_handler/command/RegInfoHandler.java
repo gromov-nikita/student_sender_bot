@@ -46,7 +46,7 @@ public class RegInfoHandler {
 
     }
     private String getMessage(long chatId) {
-        List<StudentRecord> recordGroup = studentRecordService.findAllByChatIdAndDateAfterOrEqually(chatId, LocalDate.now());
+        List<StudentRecord> recordGroup = studentRecordService.findAllNotCanceledByChatIdAndDateAfterOrEqually(chatId, LocalDate.now());
         if(recordGroup.isEmpty()) return "На данный момент у вас отсутствуют запланированные консультации.";
         else return StreamEx.of(recordGroup)
                 .sortedBy(record -> record.getRegistration().getDate())

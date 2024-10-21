@@ -173,7 +173,7 @@ public class ConsultationRegistrationSurvey implements Survey {
         updateReachedConsultationLimit();
     }
     private void updateReachedConsultationLimit() {
-        this.hasReachedConsultationLimit = studentRecordService.findAllByUserAndDateAfterOrEquallyAndSubject(
+        this.hasReachedConsultationLimit = studentRecordService.findAllNotCanceledByUserAndDateAfterOrEquallyAndSubject(
                 appUser, LocalDate.now(), subject
         ).size() >= REG_LIMIT;
     }
