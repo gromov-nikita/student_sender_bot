@@ -98,7 +98,7 @@ public class ConsultationRegistrationSurvey implements Survey {
         );
     }
     private SendMessage closeWithoutConsultations(Long chatId) {
-        return messageCreator.getReplyKeyboardMessage(chatId, "На данный момент для вас нет доступных консультаций.",
+        return messageCreator.getReplyKeyboardMessage(chatId, "На данный момент для вас нет доступных консультаций.\n Перезвоните по телефону на кафедру 95-21-84 для уточнения информации.",
                 replyKeyboardCreator.generateCommandsReplyKeyboard(BotCommandLevel.DEFAULT, appUser.getType())
         );
     }

@@ -14,61 +14,61 @@ import static org.bsut.student_sender_bot.service.bot.enums.BotCommandLevel.*;
 @Getter
 public enum BotCommand {
     COMMANDS(
-            "/команды",
+            "/commands",
             "Список всех доступных команд.",
             DEFAULT,
             List.of(UserType.values())
     ),
     PROFILE(
-            "/профиль",
+            "/profile",
             "Профиль.",
             DEFAULT,
             List.of(UserType.values())
     ),
     ATTENDANCE_CHECK(
-            "/отметить присутствующих",
+            "/attendanceCheck",
             "Отметить отсутствующих.",
             DEFAULT,
             List.of(UserType.TEACHER)
     ),
     REG(
-            "/зарегистрироваться",
+            "/reg",
             "Регистрация на консультацию.",
             DEFAULT,
             List.of(UserType.STUDENT)
     ),
     REG_INFO(
-            "/информация о регистрациях",
+            "/regInfo",
             "Информации о предстоящих консультациях.",
             DEFAULT,
             List.of(UserType.STUDENT)
     ),
     REG_CANCEL(
-            "/отмена регистрации",
+            "/regCancel",
             "Отмена консультаций.",
             DEFAULT,
             List.of(UserType.STUDENT)
     ),
     NAME_CHANGE(
-            "/смена Ф.И.О.",
+            "/nameChange",
             "Смена Ф.И.О.",
             DEFAULT,
             List.of(UserType.values())
     ),
     PHONE_NUMBER_CHANGE(
-            "/смена номера телефона",
+            "/phoneNumberChange",
             "Смена номера телефона.",
             DEFAULT,
             List.of(UserType.values())
     ),
     STUDENT_GROUP_CHANGE(
-            "/смена группы",
+            "/studentGroupChange",
             "Смена группы.",
             DEFAULT,
             List.of(UserType.values())
     ),
     STOP(
-            "/прекратить опрос",
+            "/stop",
             "Прекращение опроса.",
             SURVEY,
             List.of(UserType.values())
