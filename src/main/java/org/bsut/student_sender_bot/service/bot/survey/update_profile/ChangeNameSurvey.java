@@ -48,7 +48,7 @@ public class ChangeNameSurvey implements Survey {
         appUserService.save(appUser);
         return messageCreator.getReplyKeyboardMessage(
                 chatId,
-                "Ф.И.О. успешно изменено.",
+                "Профиль обновлен.",
                 replyKeyboardCreator.generateCommandsReplyKeyboard(BotCommandLevel.DEFAULT, appUser.getType())
         );
     }

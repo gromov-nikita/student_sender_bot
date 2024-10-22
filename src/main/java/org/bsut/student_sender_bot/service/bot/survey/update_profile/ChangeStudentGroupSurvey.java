@@ -59,7 +59,7 @@ public class ChangeStudentGroupSurvey implements Survey {
         appUserService.save(appUser);
         return messageCreator.getReplyKeyboardMessage(
                 chatId,
-                "Группа изменена.",
+                "Профиль обновлен.",
                 replyKeyboardCreator.generateCommandsReplyKeyboard(BotCommandLevel.DEFAULT, appUser.getType())
         );
     }

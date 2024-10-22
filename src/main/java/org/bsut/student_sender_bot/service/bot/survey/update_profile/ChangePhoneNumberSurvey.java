@@ -52,7 +52,7 @@ public class ChangePhoneNumberSurvey implements Survey {
         appUserService.save(appUser);
         return messageCreator.getReplyKeyboardMessage(
                 chatId,
-                "Номер телефона изменен.",
+                "Профиль обновлен.",
                 replyKeyboardCreator.generateCommandsReplyKeyboard(BotCommandLevel.DEFAULT, appUser.getType())
         );
     }
