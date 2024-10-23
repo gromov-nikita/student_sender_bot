@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: student_sender_bot
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+  cache:
+    type: redis
+  data:
+    redis:
+      host: ${SPRING_REDIS_HOST}
+      port: ${SPRING_REDIS_PORT}
+telegram:
+  bot:
+    username: ${TELEGRAM_BOT_USERNAME}
+    token: ${TELEGRAM_BOT_TOKEN}
+cron:
+  send-student:
+    time-interval: ${CRON_SEND_STUDENT_TIME_INTERVAL}
+const:
+  student:
+    reg:
+      limit: ${STUDENT_REG_LIMIT}
+  group:
+    without:
+      name: ${GROUP_WITHOUT_NAME}

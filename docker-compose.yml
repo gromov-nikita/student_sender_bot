@@ -22,6 +22,7 @@ services:
     image: hromay/student_sender_bot:latest
     container_name: student_sender_bot
     environment:
+      - SPRING_PROFILES_ACTIVE=docker
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/student_sender_bot
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=5863

@@ -4,7 +4,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/student_sender_bot
     username: postgres
-    password:
+    password: 5863
   jpa:
     hibernate:
       ddl-auto: update
@@ -21,3 +21,11 @@ telegram:
 cron:
   send-student:
     time-interval: 0 */10 * * * *
+const:
+  student:
+    reg:
+      limit: 1
+  group:
+    without:
+      name:
+        Отсутствует
