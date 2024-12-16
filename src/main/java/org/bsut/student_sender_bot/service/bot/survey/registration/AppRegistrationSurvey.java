@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
+import java.util.List;
 import java.util.Objects;
 
 import static org.bsut.student_sender_bot.service.bot.enums.BotCommand.getAllCommandInfo;
@@ -32,6 +33,8 @@ import static org.bsut.student_sender_bot.service.bot.enums.BotCommand.getAllCom
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class AppRegistrationSurvey implements Survey {
 
+    private final static String PERSONAL_DATA_BUTTON = "Принять условия использования.";
+
     private final Splitter splitter;
     private final SendMessageCreator messageCreator;
     private final StudentGroupService studentGroupService;
@@ -41,6 +44,7 @@ public class AppRegistrationSurvey implements Survey {
     private AppUser appUser;
     private boolean newUser = false;
     private boolean changedUser = true;
+    private boolean confirmedPersonalData = false;
     private String phoneNumber;
     private String name;
     private StudentGroup group;
@@ -49,7 +53,8 @@ public class AppRegistrationSurvey implements Survey {
 
     @Override
     public SendMessage nextMessage(Long chatId) {
-        if(Objects.isNull(phoneNumber)) return getPhoneNumberMessage(chatId);
+        if(!confirmedPersonalData) return getPersonalDataMessage(chatId);
+        else if(Objects.isNull(phoneNumber)) return getPhoneNumberMessage(chatId);
         else if(!newUser) return null;
         else if(Objects.isNull(name)) return getNameMessage(chatId);
         else if(Objects.isNull(group)) return getStudentGroupMessage(chatId);
@@ -58,7 +63,8 @@ public class AppRegistrationSurvey implements Survey {
 
     @Override
     public void handleAnswer(Message message) {
-        if(Objects.isNull(phoneNumber)) handlePhoneNumberMessage(message);
+        if(!confirmedPersonalData) handlePersonalDataMessage(message);
+        else if(Objects.isNull(phoneNumber)) handlePhoneNumberMessage(message);
         else if(Objects.isNull(name)) handleNameMessage(message);
         else if(Objects.isNull(group)) handleGroupNameMessage(message);
     }
@@ -98,6 +104,13 @@ public class AppRegistrationSurvey implements Survey {
                 ))
         );
     }
+    private SendMessage getPersonalDataMessage(Long chatId) {
+        return messageCreator.getReplyKeyboardMessage(
+                chatId,
+                "Принимая условия использования, вы соглашаетесь с обработкой ваших личных данных.",
+                replyKeyboardCreator.generateReplyKeyboard(List.of(List.of(PERSONAL_DATA_BUTTON)))
+        );
+    }
     private SendMessage getNameMessage(Long chatId) {
         return messageCreator.getDefaultMessage(chatId,"Введите ваше Ф.И.О.");
     }
@@ -107,6 +120,9 @@ public class AppRegistrationSurvey implements Survey {
         this.appUser = appUserService.getByChatIdOrPhoneNumber(chatId, phoneNumber);
         if(Objects.isNull(appUser)) newUser = true;
         else updateUser(chatId);
+    }
+    private void handlePersonalDataMessage(Message message) {
+        if(message.getText().equals(PERSONAL_DATA_BUTTON)) this.confirmedPersonalData = true;
     }
     private void updateUser(Long chatId) {
         if(!appUser.getPhoneNumber().equals(phoneNumber)) appUser.setPhoneNumber(phoneNumber);
