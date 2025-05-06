@@ -60,9 +60,11 @@ cd student_sender_bot
 Убедитесь, что Redis и PostgreSQL запущены.
 
 ```bash
-./gradlew bootRun --args='--spring.profiles.active=dev
+./gradlew bootRun --args='--spring.profiles.active=dev'
 ```
 ### 3. Запуск Docker Compose
+Убедитесь, что установлены Docker и Docker Compose.
+В проекте уже есть файл docker-compose.yml. Запустите приложение с помощью:
 ```bash
 docker-compose up -d
 ```
