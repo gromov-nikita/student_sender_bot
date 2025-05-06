@@ -56,13 +56,13 @@
 git clone https://github.com/gromov-nikita/student_sender_bot.git
 cd student_sender_bot
 ```
-2. Запуск вручную (локально)
+### 2. Запуск вручную (локально)
 Убедитесь, что Redis и PostgreSQL запущены.
 
 ```bash
 ./gradlew bootRun --args='--spring.profiles.active=dev
 ```
-3. Запуск через Docker
+### 3. Запуск через Docker
 Проект уже доступен на Docker Hub. Вы можете запустить его с использованием следующей команды:
 
 ```bash
