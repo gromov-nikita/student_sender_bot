@@ -20,7 +20,7 @@
   
 ## Технологии
 
-- Java 17
+- Java 21
 - Spring Boot
 - Telegram Bot API
 - PostgreSQL
