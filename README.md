@@ -64,6 +64,6 @@ cd student_sender_bot
 ```
 ### 3. Запуск Docker Compose
 ```bash
-docker-compose up --build
+docker-compose up -d
 ```
 
