@@ -56,13 +56,17 @@
 git clone https://github.com/gromov-nikita/student_sender_bot.git
 cd student_sender_bot
 ```
-### 2. Запуск вручную
+### 2. Клонировать проект
+
+Создать своего бота в telegram и заменить username и token в application-dev.yml и docker-compose.yml на полученные.
+
+### 3. Запуск вручную
 Убедитесь, что Redis и PostgreSQL запущены.
 
 ```bash
 ./gradlew bootRun --args='--spring.profiles.active=dev'
 ```
-### 3. Запуск Docker Compose
+### 4. Запуск Docker Compose
 Убедитесь, что установлены Docker и Docker Compose.
 В проекте уже есть файл docker-compose.yml. Запустите приложение с помощью:
 ```bash
