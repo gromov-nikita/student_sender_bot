@@ -56,9 +56,9 @@
 git clone https://github.com/gromov-nikita/student_sender_bot.git
 cd student_sender_bot
 ```
-### 2. Клонировать проект
+### 2. Создать своего бота
 
-Создать своего бота в telegram и заменить username и token в application-dev.yml и docker-compose.yml на полученные.
+Заменить username и token в application-dev.yml и docker-compose.yml на полученные.
 
 ### 3. Запуск вручную
 Убедитесь, что Redis и PostgreSQL запущены.
