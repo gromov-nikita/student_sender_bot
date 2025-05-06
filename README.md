@@ -68,4 +68,8 @@ cd student_sender_bot
 ```bash
 docker-compose up -d
 ```
+Чтобы остановить и удалить контейнеры, выполните:
+```bash
+docker-compose down
+```
 
