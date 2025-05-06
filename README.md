@@ -18,11 +18,24 @@
 - Просмотр преподавателем списка записавшихся
 - Отметка присутствующих студентов
   
-## Технологии
+## 🧰 Технологии
 
 - Java 21
-- Spring Boot
-- Telegram Bot API
+- Spring Boot 3.3.3
 - PostgreSQL
-- Redis
+- Redis (Jedis)
+- Telegram Bot API (`telegrambots-spring-boot-starter`)
+- Gradle
+- Docker
+- Lombok
+- Apache POI (для работы с Excel)
+- StreamEx
+- JUnit 5, Mockito
+
+## 🚀 Как запустить
+
+### 1. Клонировать репозиторий
+```bash
+git clone https://github.com/gromov-nikita/student_sender_bot.git
+cd student_sender_bot
 
