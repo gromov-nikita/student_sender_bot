@@ -22,7 +22,6 @@ configurations {
 repositories {
     mavenCentral()
 }
-
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework.boot:spring-boot-starter-web")
@@ -42,9 +41,13 @@ dependencies {
     annotationProcessor("org.hibernate.orm:hibernate-jpamodelgen:6.6.0.Final")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.mockito:mockito-core:4.6.1") // Стандартный Mockito для Java
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2") // JUnit 5
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.8.2") // JUnit 5 engine
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 tasks.withType<Test> {
     useJUnitPlatform()
 }
+
