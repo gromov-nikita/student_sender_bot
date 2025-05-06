@@ -66,6 +66,6 @@ cd student_sender_bot
 Проект уже доступен на Docker Hub. Вы можете запустить его с использованием следующей команды:
 
 ```bash
-docker pull chromay/student_sender_bot
+docker pull hromay/student_sender_bot
 docker run --env-file .env -p 8080:8080 hromay/student_sender_bot
 ```
