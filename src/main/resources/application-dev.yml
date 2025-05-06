@@ -17,7 +17,7 @@ spring:
 telegram:
   bot:
     username: student_sender_bot
-    token:
+    token: 7466690263:AAGOYLoIpwksOKfPZPbEHBQSPmk-RPajN9o
 cron:
   send-student:
     time-interval: 0 */10 * * * *
