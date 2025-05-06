@@ -48,5 +48,24 @@
 
 ### `application-docker.yml` — используется при запуске через Docker
 
+## 🚀 Как запустить
 
+### 1. Клонировать проект
 
+```bash
+git clone https://github.com/gromov-nikita/student_sender_bot.git
+cd student_sender_bot
+```
+2. Запуск вручную (локально)
+Убедитесь, что Redis и PostgreSQL запущены.
+
+```bash
+./gradlew bootRun --args='--spring.profiles.active=dev
+```
+3. Запуск через Docker
+Проект уже доступен на Docker Hub. Вы можете запустить его с использованием следующей команды:
+
+```bash
+docker pull chromay/student_sender_bot
+docker run --env-file .env -p 8080:8080 hromay/student_sender_bot
+```
