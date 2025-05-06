@@ -62,10 +62,3 @@ cd student_sender_bot
 ```bash
 ./gradlew bootRun --args='--spring.profiles.active=dev
 ```
-### 3. Запуск через Docker
-Проект уже доступен на Docker Hub. Вы можете запустить его с использованием следующей команды:
-
-```bash
-docker pull hromay/student_sender_bot
-docker run --env-file .env -p 8080:8080 hromay/student_sender_bot
-```
